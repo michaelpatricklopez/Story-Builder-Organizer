@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Story Planner & History Logger</title>
+    <!-- Tailwind CSS for high fidelity framework rendering -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Confetti library for immediate interactive visual gamification rewards -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;600&display=swap');
+        .font-kid { font-family: 'Fredoka', sans-serif; }
+        .font-adult { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-card { border: none !important; box-shadow: none !important; background: white !important; color: black !important; }
+        }
+    </style>
+</head>
+<body id="app-body" class="bg-sky-100 text-slate-800 min-h-screen p-4 md:p-8 font-kid transition-colors duration-300">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Main Application Navigation Control Panel -->
+        <header class="flex flex-col lg:flex-row justify-between items-center gap-4 mb-6 no-print bg-white/90 backdrop-blur p-4 rounded-2xl shadow-sm border border-white/20">
+            <div>
+                <h1 id="app-title" class="text-3xl font-bold text-sky-600">✨ Premium Story Map Pro</h1>
+                <p id="app-subtitle" class="text-sm text-slate-500">Interactive curriculum scaffolds with localized history portfolio engines.</p>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- App Mode Selection -->
+                <div class="flex bg-slate-100 p-1 rounded-xl text-sm font-semibold">
+                    <button onclick="setStoryType('personal')" id="btn-type-personal" class="px-3 py-1.5 rounded-lg transition-all bg-white text-slate-800 shadow-sm font-bold">🏡 Self Story</button>
+                    <button onclick="setStoryType('literature')" id="btn-type-literature" class="px-3 py-1.5 rounded-lg transition-all text-slate-500 hover:text-slate-800">📚 Book Review</button>
+                </div>
+                <!-- Student Age Layout Toggles -->
+                <div class="flex bg-slate-100 p-1 rounded-xl text-sm font-semibold">
+                    <button onclick="setAgeMode('kid')" id="btn-mode-kid" class="px-3 py-1.5 rounded-lg transition-all bg-sky-500 text-white shadow-sm">🎈 Kid Mode</button>
+                    <button onclick="setAgeMode('adult')" id="btn-mode-adult" class="px-3 py-1.5 rounded-lg transition-all text-slate-600 hover:bg-slate-200">💼 Older Mode</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Graphic Organizer Steps Checklist Tracker -->
+        <div class="no-print bg-white p-3 rounded-xl shadow-sm mb-6 flex justify-between items-center overflow-x-auto gap-2">
+            <div id="go-step-0" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-sky-500 text-white font-bold text-xs sm:text-sm">👤 <span class="step-lbl">Who</span></div>
+            <div id="go-step-1" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">📍 <span class="step-lbl">Where</span></div>
+            <div id="go-step-2" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">🏁 <span class="step-lbl">What</span></div>
+            <div id="go-step-3" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">💡 <span class="step-lbl">Why</span></div>
+            <div id="go-step-4" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">💭 <span class="step-lbl">Reflection</span></div>
+        </div>
+
+        <!-- Primary Canvas Structure Layout Split Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Left Workspace Panel Column -->
+            <div class="lg:col-span-2 space-y-4 no-print">
+                <div class="bg-white p-6 rounded-2xl shadow-sm space-y-6">
+                    <!-- Step Section 1: Frame Selection -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2 text-slate-700 id-lbl">
+                            <span>💬</span> 1. Choose a Sentence Starter:
+                        </h3>
+                        <div id="frame-container" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <!-- Step Section 2: Injected Target Word Bank Grid -->
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 id="wordbank-title" class="text-lg font-bold flex items-center gap-2 text-slate-700 id-lbl">
+                                <span>🎯</span> 2. Choose Your Answer Target:
+                            </h3>
+                            <!-- Custom Word Input Scaffolding Engine -->
+                            <button onclick="promptCustomWord()" class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold rounded-lg border border-amber-300 transition-all flex items-center gap-1">
+                                ⌨️ + Type Custom Word
+                            </button>
+                        </div>
+                        <div id="wordbank-container" class="flex flex-wrap gap-2 max-h-56 overflow-y-auto p-1"></div>
+                    </div>
+                </div>
+
+                <!-- Pagination Progress Navigation Row Bar -->
+                <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center">
+                    <button onclick="prevStep()" id="btn-prev" class="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed" disabled>← Previous Item</button>
+                    <button onclick="nextStep()" id="btn-next" class="px-4 py-2 text-sm font-bold rounded-lg bg-sky-500 text-white hover:bg-sky-600 shadow-sm transition-all">Next Question →</button>
+                </div>
+            </div>
+
+            <!-- Right Live Workspace Profile Sheet Panel View Column -->
+            <div class="lg:col-span-1 space-y-4">
+                <div id="story-card" class="print-card bg-white p-6 rounded-2xl shadow-sm border-2 border-dashed border-sky-200 min-h-[460px] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4 pb-2 border-b">
+                            <h2 id="preview-header" class="text-xl font-bold text-sky-600"><span id="output-title">📝 My Story Map</span></h2>
+                            <!-- Audio Readout Accessibility Feature Button Component -->
+                            <button onclick="readStoryAloud()" class="no-print p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm title-btn transition-all" title="Speak complete text summary out loud">
+                                🔊 Speak
+                            </button>
+                        </div>
+                        
+                        <!-- Visual Text Generator Output Workspace Box -->
+                        <div id="story-output-box" class="space-y-3 text-base md:text-lg leading-relaxed text-slate-700">
+                            <p id="p-step-0" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 1 missing...</span></p>
+                            <p id="p-step-1" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 2 missing...</span></p>
+                            <p id="p-step-2" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 3 missing...</span></p>
+                            <p id="p-step-3" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 4 missing...</span></p>
+                            <p id="p-step-4" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 5 missing...</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Actions Dispatch Interface -->
+                    <div class="mt-6 space-y-2 no-print">
+                        <button onclick="window.print()" class="w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">🖨️ Print Document</button>
+                        <button onclick="saveAndCommitToPortfolio()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">💾 Commit to Digital History</button>
+                        <button onclick="shareViaEmail()" class="w-full py-2.5 px-4 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">📧 Email Log to Parent</button>
+                        <button onclick="resetApp()" class="w-full py-1.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs rounded-xl transition-all">Clear Active Builder Map</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historical Performance Portfolio Component Layout Section Drawer -->
+        <section class="no-print bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-colors duration-300" id="history-section-panel">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="text-xl font-bold flex items-center gap-2 text-slate-700 section-hdr-title">
+                    <span>📜</span> Device Portfolio History <span class="text-xs font-normal text-slate-400">(Saved locally on this browser)</span>
+                </h3>
+                <button onclick="clearAllDeviceHistory()" class="text-xs font-semibold text-red-400 hover:text-red-600">Clear History Log</button>
+            </div>
+            <div id="history-portfolio-output" class="space-y-3 text-sm max-h-64 overflow-y-auto pr-2">
+                <!-- Script populates saved entries here -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Core Internal Control State Architecture Engine
+        let ageMode = 'kid';
+        let storyType = 'personal';
+        let currentStep = 0; 
+
+        const definitions = {
+            personal: { labels: ["Who", "Where", "What", "Why", "Reflection"] },
+            literature: { labels: ["Characters", "Setting", "Plot Event", "Theme / Motive", "Book Review"] }
+        };
+
+        const wordLibrary = {
+            kid: {
+                personal: [
+                    { title: "Who", color: "text-amber-600 font-bold", frames: ["Today, I spent time with", "This morning, our group included", "I did activities with"], words: ["Mom and Dad", "my school friends", "my classroom teacher", "myself independently"] },
+                    { title: "Where", color: "text-blue-600 font-bold", frames: ["We worked over at the", "I spent my time inside the", "We traveled directly to the"], words: ["school playground 🛝", "main library 📚", "cafeteria lunchroom 🍎", "home living room 🏠"] },
+                    { title: "What", color: "text-emerald-600 font-bold", frames: ["Our main project was to", "I practiced how to", "We had fun when we did"], words: ["paint a creative picture 🎨", "read an interesting book 📖", "eat a healthy snack 🥛", "build with learning blocks 🧱"] },
+                    { title: "Why", color: "text-pink-600 font-bold", frames: ["We engaged in this because", "This assignment helps me to", "This task was done because"], words: ["it was recess choice time", "we wanted to learn new things", "our schedule required it", "I wanted to practice my goals"] },
+                    { title: "Reflection", color: "text-purple-600 font-bold", frames: ["My assessment is that it felt", "Looking back, I thought it was", "I predict next time will be"], words: ["super awesome! 😄", "pretty good / calm 🙂", "a little bit hard 🙁", "tiring or boring 🥱"] }
+                ],
+                literature: [
+                    { title: "Characters", color: "text-amber-600 font-bold", frames: ["The main characters analyzed are", "The focus of this reading is about", "The story features a central figure named"], words: ["a brave animal hero 🐻", "a fast-learning kid 👦", "a group of loyal friends 👥", "a magical forest creature 🦄"] },
+                    { title: "Setting", color: "text-blue-600 font-bold", frames: ["The narrative framework is set in a", "The scenes take place across a", "The backdrop of the text is a"], words: ["mysterious hidden woods 🌲", "busy public elementary school 🏫", "futuristic space colony 🚀", "peaceful country farmhouse 🏡"] },
+                    { title: "Plot Event", color: "text-emerald-600 font-bold", frames: ["The main plot development involves", "In the middle of the book,", "A major event occurs when characters"], words: ["going on an unexpected trip", "solving a challenging mystery", "discovering a hidden power", "helping a neighbor out of trouble"] },
+                    { title: "Theme / Motive", color: "text-pink-600 font-bold", frames: ["The underlying lesson is to always", "The character does this to prove that", "The main message of the text is to"], words: ["show true kindness to others", "never give up on your goals", "work together as a team", "explore and ask questions"] },
+                    { title: "Book Review", color: "text-purple-600 font-bold", frames: ["My analytical book review is that it was", "I evaluated the storyline and found it", "I recommend this book because it was"], words: ["incredibly exciting 📖", "really funny and witty 😂", "a little bit sad or serious 😢", "confusing to follow along 🧩"] }
+                ]
+            },
+            adult: {
+                personal: [
+                    { title: "Who", color: "text-amber-500 font-bold", frames: ["For today's objective tracker, I collaborated with", "The primary personnel involved included", "Independent workflow was completed alongside"], words: ["the community vocational team", "my peer mentor cohort", "assigned campus staff members", "my transition support group"] },
+                    { title: "Where", color: "text-blue-500 font-bold", frames: ["Operational targets were completed inside the", "The designated workspace for this track was the", "Operations were carried out at the"], words: ["technology learning center", "independent workshop facility", "off-site community worksite", "specialized media lab area"] },
+                    { title: "What", color: "text-emerald-500 font-bold", frames: ["The core actionable milestone met was", "Tasks heavily prioritized processing", "Efforts focused specifically on"], words: ["updating my digital portfolio files", "auditing structural task inventories", "reviewing self-regulation metrics", "completing formal training modules"] },
+                    { title: "Why", color: "text-pink-500 font-bold", frames: ["This directly targets my long-term goal to", "This matches criteria designed to expand", "Execution of this module ensures I build"], words: ["increase professional independence", "strengthen critical problem-solving", "improve clear self-advocacy pathways", "attain mastery of scheduling rules"] },
+                    { title: "Reflection", color: "text-purple-500 font-bold", frames: ["My formal self-evaluation of this performance is", "Regarding stress and engagement levels, it was", "Looking ahead, I anticipate future tracks will be"], words: ["highly successful and accurate", "standard / met essential baselines", "demanding / required accommodations", "inefficient / requires modification"] }
+                ],
+                literature: [
+                    { title: "Characters", color: "text-amber-500 font-bold", frames: ["The principal protagonists under analysis are", "The character arc tracks the development of", "The text heavily centers around relationships between"], words: ["marginalized historical figures", "conflicted, complex individuals", "competing structural social groups", "an unreliable, isolated narrator"] },
+                    { title: "Setting", color: "text-blue-500 font-bold", frames: ["The spatial and historical setting is established within", "The narrative geography layout takes place in", "The author positions the characters against"], words: ["a stark post-industrial urban environment", "a highly structured dystopian setting", "a changing pre-war historical period", "an isolated rural agricultural zone"] },
+                    { title: "Plot Event", color: "text-emerald-500 font-bold", frames: ["The primary dramatic conflict is driven by", "The narrative climax is reached when", "The thematic trajectory changes immediately after"], words: ["a systematic breakdown of institutional rules", "a fundamental choice between personal goals", "an unexpected turn in community alignment", "the loss of an invaluable structural asset"] },
+                    { title: "Theme / Motive", color: "text-pink-500 font-bold", frames: ["The structural message serves primarily to critique", "The internal motivations highlight the struggle to", "The author uses this framework to explore"], words: ["modern societal authority structures", "the fragile nature of personal resilience", "ethical dilemmas under extreme duress", "how historical memory modifies identity"] },
+                    { title: "Book Review", color: "text-purple-500 font-bold", frames: ["My objective literary evaluation of this text is", "The structural integrity of the narrative makes it", "Compared to similar literary coursework, this is"], words: ["profoundly analytical and engaging", "stylistically sound but predictable", "overly dense / lacks logical pacing", "critically relevant to societal analysis"] }
+                ]
+            }
+        };
+
+        let sessionAnswers = Array(5).fill(null).map(() => ({ frame: '', word: '' }));
+
+        function setStoryType(type) {
+            storyType = type;
+            document.getElementById('btn-type-personal').className = type === 'personal' ? "px-3 py-1.5 rounded-lg transition-all bg-white text-slate-800 shadow-sm font-bold" : "px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-600";
+            document.getElementById('btn-type-literature').className = type === 'literature' ? "px-3 py-1.5 rounded-lg transition-all bg-white text-slate-800 shadow-sm font-bold" : "px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-600";
+            document.getElementById('output-title').innerText = type === 'personal' ? "📝 My Story Map" : "📖 Book Summary Map";
+            updateLabels();
+            resetApp();
+        }
+
+        function setAgeMode(mode) {
+            ageMode = mode;
+            const body = document.getElementById('app-body');
+            const title = document.getElementById('app-title');
+            const sub = document.getElementById('app-subtitle');
+            const bKid = document.getElementById('btn-mode-kid');
+            const bAdult = document.getElementById('btn-mode-adult');
+            const outBox = document.getElementById('story-output-box');
+            const historyPanel = document.getElementById('history-section-panel');
+            const idLabels = document.querySelectorAll('.id-lbl');
+            const secHdr = document.querySelector('.section-hdr-title');
+
+            if (mode === 'adult') {
+                body.className = "bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8 font-adult transition-colors duration-300";
+                title.className = "text-3xl font-bold text-indigo-400";
+                title.innerText = "📋 Student Daily Log Workspace";
+                sub.className = "text-sm text-slate-400";
+                sub.innerText = "Systematic self-regulation and narrative routine builder.";
+                bAdult.className = "px-3 py-1.5 rounded-lg font-bold transition-all bg-indigo-600 text-white shadow-sm";
+                bKid.className = "px-3 py-1.5 rounded-lg font-bold transition-all text-slate-400 hover:bg-slate-800";
+                document.getElementById('preview-header').className = "text-xl font-bold text-indigo-400";
+                document.getElementById('story-card').classList.replace('border-sky-200', 'border-slate-700');
+                outBox.classList.replace('text-slate-700', 'text-slate-200');
+                historyPanel.classList.replace('bg-white', 'bg-slate-800');
+                historyPanel.classList.replace('border-slate-100', 'border-slate-700');
+                secHdr.classList.replace('text-slate-700', 'text-slate-200');
+                idLabels.forEach(l => l.classList.replace('text-slate-700', 'text-slate-300'));
+            } else {
+                body.className = "bg-sky-100 text-slate-800 min-h-screen p-4 md:p-8 font-kid transition-colors duration-300";
+                title.className = "text-3xl font-bold text-sky-600";
+                title.innerText = "✨ Premium Story Map Pro";
+                sub.className = "text-sm text-slate-500";
+                sub.innerText = "Interactive curriculum scaffolds with localized history portfolio engines.";
+                bKid.className = "px-3 py-1.5 rounded-lg font-bold transition-all bg-sky-500 text-white shadow-sm";
+                bAdult.className = "px-3 py-1.5 rounded-lg font-bold transition-all text-slate-600 hover:bg-slate-200";
+                document.getElementById('preview-header').className = "text-xl font-bold text-sky-600";
+                document.getElementById('story-card').classList.replace('border-slate-700', 'border-sky-200');
+                outBox.classList.replace('text-slate-200', 'text-slate-700');
+                historyPanel.classList.replace('bg-slate-800', 'bg-white');
+                historyPanel.classList.replace('border-slate-700', 'border-slate-100');
+                secHdr.classList.replace('text-slate-200', 'text-slate-700');
+                idLabels.forEach(l => l.classList.replace('text-slate-300', 'text-slate-700'));
+            }
+            resetApp();
+        }
+
+        function updateLabels() {
+            const currentLabels = definitions[storyType].labels;
+            const indicators = document.querySelectorAll('.step-lbl');
+            indicators.forEach((ind, idx) => { ind.innerText = currentLabels[idx]; });
+        }
+
+        function renderWorkspace() {
+            const stepConfig = wordLibrary[ageMode][storyType][currentStep];
+            document.getElementById('wordbank-title').innerHTML = `<span>🎯</span> 2. Choose ${definitions[storyType].labels[currentStep]} Answer Target:`;
+            
+            // Set Checklist Tab Bar Highlights
+            for(let i=0; i<5; i++) {
+                const el = document.getElementById(`go-step-${i}`);
+                if(i === currentStep) {
+                    el.className = `flex-1 min-w-[100px] text-center p-2 rounded-lg font-bold text-xs sm:text-sm bg-sky-500 text-white ring-2 ring-offset-2 ring-sky-400`;
+                } else if(sessionAnswers[i].word) {
+                    el.className = `flex-1 min-w-[100px] text-center p-2 rounded-lg font-bold text-xs sm:text-sm bg-emerald-500 text-white`;
+                } else {
+                    el.className = ageMode === 'kid' 
+                        ? `flex-1 min-w-[100px] text-center p-2 rounded-lg bg-white text-slate-400 border border-slate-200 font-semibold text-xs sm:text-sm`
+                        : `flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-800 text-slate-500 border border-slate-700 font-semibold text-xs sm:text-sm`;
+                }
+            }
+
+            // Build Sentence Frames UI Buttons
+            const frameBox = document.getElementById('frame-container');
+            frameBox.innerHTML = stepConfig.frames.map(f => {
+                const active = sessionAnswers[currentStep].frame === f;
+                return `<button onclick="selectToken('frame', '${f}')" class="border-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-sky-500 border-sky-500 text-white' : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-400'}">${f}</button>`;
+            }).join('');
+
+            // Build Word Bank UI Buttons
+            const wbBox = document.getElementById('wordbank-container');
+            wbBox.innerHTML = stepConfig.words.map(w => {
+                const active = sessionAnswers[currentStep].word === w;
+                return `<button onclick="selectToken('word', '${w}')" class="border-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-slate-700 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-400'}">${w}</button>`;
+            }).join('');
+
+            // Update Pagination Button States
+            document.getElementById('btn-prev').disabled = currentStep === 0;
+            document.getElementById('btn-prev').className = currentStep === 0 
+                ? "px-4 py-2 text-sm rounded-lg bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed" 
+                : "px-4 py-2 text-sm rounded-lg bg-slate-200 text-slate-700 font-semibold hover:bg-slate-300";
+            document.getElementById('btn-next').innerText = currentStep === 4 ? "Complete Profile 🏆" : "Next Question →";
+        }
+
+        // Custom Input Box Implementation Action
+        function promptCustomWord() {
+            const input = prompt(`Enter a custom target token response for [${definitions[storyType].labels[currentStep]}]:`);
+            if (input && input.trim() !== "") {
+                selectToken('word', input.trim());
+            }
+        }
+
+        function selectToken(type, val) {
+            sessionAnswers[currentStep][type] = val;
+            updateLivePreviewBlock();
+            renderWorkspace();
+        }
+
+        function updateLivePreviewBlock() {
+            const stepConfig = wordLibrary[ageMode][storyType][currentStep];
+            const activeData = sessionAnswers[currentStep];
+            const targetParagraph = document.getElementById(`p-step-${currentStep}`);
+
+            if (activeData.frame || activeData.word) {
+                let frameSpan = `<span class="opacity-90 font-normal">${activeData.frame}</span>`;
+                let wordSpan = activeData.word ? ` <span class="${stepConfig.color}">${activeData.word}</span>.` : '...';
+                targetParagraph.innerHTML = `${frameSpan}${wordSpan}`;
+                
+                targetParagraph.className = ageMode === 'kid'
+                    ? "p-3 rounded-xl bg-white border border-slate-200 shadow-sm text-base md:text-lg transition-all"
+                    : "p-3 rounded-xl bg-slate-800/50 border border-slate-700 text-base md:text-lg transition-all";
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < 4) {
+                currentStep++;
+                renderWorkspace();
+            } else {
+                // Celebration Reward Trigger Algorithm
+                confetti({ particleCount: 140, spread: 80, origin: { y: 0.6 } });
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderWorkspace();
+            }
+        }
+
+        // Accessibility Audio Text-To-Speech Execution Routine
+        function readStoryAloud() {
+            const blocks = [];
+            for (let i = 0; i < 5; i++) {
+                const text = document.getElementById(`p-step-${i}`).innerText;
+                if (!text.includes("tracker unselected") && !text.includes("missing")) {
+                    blocks.push(text);
+                }
+            }
+            if (blocks.length === 0) {
+                alert("The canvas profile map currently contains no readable data elements.");
+                return;
+            }
+            window.speechSynthesis.cancel(); // Terminate existing voice queues
+            const speechString = blocks.join(" ");
+            const utterance = new SpeechSynthesisUtterance(speechString);
+            utterance.rate = 0.9; // Lower playback pacing slightly for structural comprehension
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Parent Communication Quick-Share Direct Pipeline Channel
+        function shareViaEmail() {
+            const compiledText = getPlainTextStory();
+            if(!compiledText) return;
+            const subject = encodeURIComponent(`Student Learning Log: ${new Date().toLocaleDateString()}`);
+            const body = encodeURIComponent(`Hello,\n\nHere is the updated learning story map completed today:\n\n${compiledText}\n\nSent via Story Planner Pro.`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function getPlainTextStory() {
+            const lines = [];
+            for(let i=0; i<5; i++) {
+                const txt = document.getElementById(`p-step-${i}`).innerText;
+                if(!txt.includes("tracker unselected") && !txt.includes("missing")) lines.push(txt);
+            }
+            if(lines.length === 0) {
+                alert("Please build an active workspace story profile map before trying to export data.");
+                return null;
+            }
+            return lines.join("\n");
+        }
+
+        // Device On-Memory Local Storage Historical Logging Portfolio System
+        function saveAndCommitToPortfolio() {
+            const textSummary = getPlainTextStory();
+            if(!textSummary) return;
+
+            const historicalManifest = JSON.parse(localStorage.getItem('story_mvp_portfolio') || '[]');
+            const entry = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                type: storyType,
+                mode: ageMode,
+                content: textSummary.replace(/\n/g, ' ')
+            };
+
+            historicalManifest.unshift(entry); // Append onto top position
+            localStorage.setItem('story_mvp_portfolio', JSON.stringify(historicalManifest));
+            confetti({ particleCount: 40, spread: 30 });
+            loadLocalStoragePortfolioDisplay();
+        }
+
+        function loadLocalStoragePortfolioDisplay() {
+            const container = document.getElementById('history-portfolio-output');
+            const historicalManifest = JSON.parse(localStorage.getItem('story_mvp_portfolio') || '[]');
+            
+            if(historicalManifest.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic py-2">No historical documents currently logged inside local device sandbox memory profiles.</p>`;
+                return;
+            }
+
+            container.innerHTML = historicalManifest.map(item => `
+                <div class="p-3 rounded-lg border text-xs leading-relaxed ${ageMode === 'kid' ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-700/50 border-slate-600 text-slate-300'}">
+                    <div class="flex justify-between font-bold text-[10px] uppercase opacity-60 mb-1">
+                        <span>📅 ${item.timestamp}</span>
+                        <span>Track: ${item.type} (${item.mode})</span>
+                    </div>
+                    <p>${item.content}</p>
+                </div>
+            `).join('');
+        }
+
+        function clearAllDeviceHistory() {
+            if(confirm("Confirm action: Clear all historically archived entries inside this local browser profile data sandbox?")) {
+                localStorage.removeItem('story_mvp_portfolio');
+                loadLocalStoragePortfolioDisplay();
+            }
+        }
+
+        function resetApp() {
+            currentStep = 0;
+            sessionAnswers = Array(5).fill(null).map(() => ({ frame: '', word: '' }));
+            for(let i=0; i<5; i++) {
+                const targetP = document.getElementById(`p-step-${i}`);
+                targetP.innerHTML = `<span class="text-slate-400 text-xs block italic">${definitions[storyType].labels[i]} tracker unselected...</span>`;
+                targetP.className = "p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]";
+            }
+            renderWorkspace();
+        }
+
+        // Initialize Core Engine Lifecycles
+        updateLabels();
+        renderWorkspace();
+        loadLocalStoragePortfolioDisplay();
+    </script>
+</body>
+</html>
