@@ -7,179 +7,221 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;600&family=Open+Dyslexic&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;600&family=Comic+Neue:wght@400;700&family=Lexend:wght@400;600&display=swap');
         
-        /* Font Selection Classes */
+        /* Global typography profile definitions */
         .font-fredoka { font-family: 'Fredoka', sans-serif; }
         .font-inter { font-family: 'Inter', sans-serif; }
-        .font-dyslexic { font-family: 'Open Dyslexic', sans-serif, system-ui; }
+        .font-comic { font-family: 'Comic Neue', cursive; }
+        .font-lexend { font-family: 'Lexend', sans-serif; }
 
-        /* Smooth Accordion Transitions */
+        /* Smooth visual animations for UI subfolders and collection components */
+        .subnav-menu { transition: max-height 0.25s ease-out; max-height: 0; overflow: hidden; }
+        .subnav-menu.open { max-height: 300px; }
         .accordion-content { transition: max-height 0.3s ease-out, padding 0.3s ease; max-height: 0; overflow: hidden; }
-        .accordion-content.open { max-height: 500px; padding: 1rem; }
+        .accordion-content.open { max-height: 1000px; padding: 1rem; }
     </style>
 </head>
 <body id="app-body" class="bg-sky-50 text-slate-800 min-h-screen font-fredoka transition-colors duration-300">
 
     <div class="flex flex-col md:flex-row min-h-screen">
-        <!-- Persistent Left Sidebar Navigation Control Pane -->
-        <aside id="sidebar-nav" class="w-full md:w-64 bg-white shadow-md md:min-h-screen p-5 flex flex-col justify-between border-r border-slate-100 no-print">
-            <div class="space-y-6">
-                <div>
+        <!-- Sidebar Shell Panel -->
+        <aside id="sidebar-nav" class="w-full md:w-64 bg-white shadow-md md:min-h-screen p-4 flex flex-col justify-between border-r border-slate-100 no-print">
+            <div class="space-y-4">
+                <div class="p-2 pb-4 border-b">
                     <h1 class="text-2xl font-bold text-sky-600 tracking-tight flex items-center gap-2">📖 Story Builder</h1>
-                    <p class="text-xs text-slate-400 mt-1">Customizable Narrative Workspace</p>
+                    <p class="text-xs text-slate-400 mt-1">Multi-Tier Scaffolding Engine</p>
                 </div>
-                <nav class="space-y-1.5">
-                    <button onclick="switchView('create')" id="nav-create" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all bg-sky-500 text-white shadow-sm">✨ Create Story</button>
-                    <button onclick="switchView('organizers')" id="nav-organizers" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">🖼️ Graphic Organizers</button>
-                    <button onclick="switchView('frames')" id="nav-frames" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">💬 Sentence Frames</button>
-                    <button onclick="switchView('wordbanks')" id="nav-wordbanks" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">🎯 Word Banks</button>
-                    <button onclick="switchView('stories')" id="nav-stories" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">📜 My Saved Stories</button>
-                </nav>
-            </div>
-            <div class="pt-4 border-t">
-                <button onclick="switchView('settings')" id="nav-settings" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-500 hover:bg-slate-100 flex items-center gap-2">⚙️ System Settings</button>
-            </div>
-        </aside>
-
-        <!-- Primary Application Main Content Workspace Box -->
-        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-            
-            <!-- VIEW A: CREATE PAGE -->
-            <section id="view-create" class="view-panel space-y-6">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Create Workspace</h2>
-                        <p class="text-sm text-slate-500">Expand each section vertically below to assemble your story map.</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Left Columns: Vertical Progressive Accordion Builder Block -->
-                    <div class="lg:col-span-2 space-y-3 no-print">
-                        <!-- Dynamic Loop Generation targets this container box -->
-                        <div id="vertical-accordion" class="space-y-3"></div>
-                        
-                        <!-- Compiled Sentence Block Summary Evaluation Button Element -->
-                        <div class="pt-4">
-                            <button onclick="compileActiveParagraph()" class="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-bold rounded-xl shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2 text-base">
-                                📑 Show "My Paragraph" Panel View
-                            </button>
+                
+                <nav class="space-y-1">
+                    <button onclick="switchView('create')" id="nav-create" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all bg-sky-500 text-white shadow-sm">✨ Create Story</button>
+                    <button onclick="switchView('organizers')" id="nav-organizers" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50">🖼️ Graphic Organizers</button>
+                    
+                    <!-- Subfolder 1: Sentence Frames Accordion Core Container -->
+                    <div class="space-y-0.5">
+                        <button onclick="toggleSubnav('subnav-frames')" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
+                            <span>💬 Sentence Frames</span>
+                            <span id="arrow-subnav-frames" class="text-[10px] text-slate-400">▶</span>
+                        </button>
+                        <div id="subnav-frames" class="subnav-menu pl-4 space-y-0.5">
+                            <button onclick="switchView('frames-who')" id="nav-frames-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">👤 Who Set</button>
+                            <button onclick="switchView('frames-where')" id="nav-frames-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">📍 Where Set</button>
+                            <button onclick="switchView('frames-what')" id="nav-frames-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">🏁 What Set</button>
+                            <button onclick="switchView('frames-why')" id="nav-frames-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💡 Why Set</button>
+                            <button onclick="switchView('frames-reflection')" id="nav-frames-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💭 Reflection Set</button>
                         </div>
                     </div>
 
-                    <!-- Right Column: Compiled View Modal / Card Display Anchor -->
+                    <!-- Subfolder 2: Word Banks Accordion Core Container -->
+                    <div class="space-y-0.5">
+                        <button onclick="toggleSubnav('subnav-wordbanks')" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
+                            <span>🎯 Word Banks</span>
+                            <span id="arrow-subnav-wordbanks" class="text-[10px] text-slate-400">▶</span>
+                        </button>
+                        <div id="subnav-wordbanks" class="subnav-menu pl-4 space-y-0.5">
+                            <button onclick="switchView('wordbanks-who')" id="nav-wordbanks-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">👤 Who Words</button>
+                            <button onclick="switchView('wordbanks-where')" id="nav-wordbanks-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">📍 Where Words</button>
+                            <button onclick="switchView('wordbanks-what')" id="nav-wordbanks-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">🏁 What Words</button>
+                            <button onclick="switchView('wordbanks-why')" id="nav-wordbanks-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💡 Why Words</button>
+                            <button onclick="switchView('wordbanks-reflection')" id="nav-wordbanks-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💭 Reflection Words</button>
+                        </div>
+                    </div>
+
+                    <button onclick="switchView('stories')" id="nav-stories" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50">📜 My Saved Stories</button>
+                </nav>
+            </div>
+            <div class="pt-4 border-t">
+                <button onclick="switchView('settings')" id="nav-settings" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-500 hover:bg-slate-100 flex items-center gap-2">⚙️ Settings</button>
+            </div>
+        </aside>
+
+        <!-- Main Display Content Workspace Box Container -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            
+            <!-- VIEW 1: CREATE HUB PAGE VIEW -->
+            <section id="view-create" class="view-panel space-y-6">
+                <div class="border-b pb-3">
+                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Workspace Editor</h2>
+                    <p class="text-sm text-slate-500">Construct sentences step-by-step using structural accordion nodes below.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-4 no-print">
+                        <div id="vertical-accordion" class="space-y-3"></div>
+                    </div>
+
+                    <!-- Right Column Sheet Node -->
                     <div class="lg:col-span-1">
-                        <div id="compiled-paragraph-card" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-dashed border-sky-200 min-h-[400px] flex flex-col justify-between transition-all">
-                            <div>
-                                <div class="flex justify-between items-center border-b pb-2 mb-4">
-                                    <h3 class="text-xl font-bold text-sky-600">📝 Live Output Sheet</h3>
-                                    <button onclick="speakText()" class="no-print p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-sm" title="Vocal Speech Synthesizer Readout">🔊 Speak</button>
+                        <div id="compiled-paragraph-card" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-dashed border-sky-200 min-h-[450px] flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <h3 class="text-xl font-bold text-sky-600">📝 Live Workspace</h3>
+                                    <button onclick="speakActiveText()" class="no-print px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all">🔊 Speak</button>
                                 </div>
                                 <div id="live-text-composite" class="space-y-2 text-lg leading-relaxed text-slate-400 italic">
-                                    Paragraph text will render here as selections are logged into the builder tool layers...
+                                    Make selections from the vertical accordion blocks to generate sentence structures...
                                 </div>
                             </div>
                             <div class="mt-6 pt-4 border-t space-y-2 no-print">
-                                <input type="text" id="active-story-title" placeholder="Give this story a unique title..." class="w-full px-3 py-2 border rounded-xl text-sm mb-2 focus:outline-sky-400 bg-slate-50 text-slate-800 font-semibold" />
-                                <button onclick="saveActiveStory()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all shadow-sm">💾 Archive to My Stories</button>
-                                <button onclick="window.print()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all">🖨️ Print Document</button>
+                                <input type="text" id="active-story-title" placeholder="Enter custom title name..." class="w-full px-3 py-2 border rounded-xl text-sm font-semibold bg-slate-50" />
+                                <button onclick="saveActiveStory()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm shadow-sm transition-all">Archive into Portfolio Log</button>
+                                <button onclick="window.print()" class="w-full py-1.5 bg-slate-100 text-slate-500 text-xs font-bold rounded-lg">🖨️ Print Document</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- VIEW B: GRAPHIC ORGANIZERS PAGE -->
+            <!-- VIEW 2: GRAPHIC ORGANIZERS SHEET -->
             <section id="view-organizers" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">Graphic Organizer Custom Library</h2>
-                    <p class="text-sm text-slate-500">Upload profile pictures and manage names of essential characters, key participants, or target locations.</p>
+                    <h2 class="text-3xl font-bold tracking-tight">Graphic Organizers Manager</h2>
+                    <p class="text-sm text-slate-500">Bind custom picture matrices to direct token strings for unified button choice rendering.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-2xl space-y-4">
-                    <h3 class="text-lg font-bold border-b pb-2">➕ Add New Visual Prompt Card Asset</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-4">
+                    <h3 class="text-md font-bold text-slate-700 uppercase tracking-wider">➕ Register New Custom Entity Card</h3>
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Asset Entity Classification</label>
-                            <select id="go-input-type" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold">
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Target Dimension Slot</label>
+                            <select id="go-input-type" class="w-full px-3 py-1.5 border rounded-xl text-xs font-semibold bg-slate-50">
                                 <option value="who">Character / Person (Who)</option>
                                 <option value="where">Location / Setting (Where)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Profile Name / Identifier</label>
-                            <input type="text" id="go-input-name" placeholder="e.g., Mrs. Smith, The Cafeteria" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm" />
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Asset Target Label Text</label>
+                            <input type="text" id="go-input-name" placeholder="e.g., Captain Hook, The Forest" class="w-full px-3 py-1.5 border rounded-xl text-xs bg-slate-50" />
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Upload Illustrative Prompt Image</label>
-                        <input type="file" id="go-input-file" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" />
+                        <label class="block text-xs font-bold text-slate-400 mb-1">Upload Visual Prompt Picture</label>
+                        <input type="file" id="go-input-file" accept="image/*" class="w-full text-xs text-slate-500" />
                     </div>
-                    <button onclick="addGraphicOrganizerAsset()" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm shadow-sm transition-all">Save Card Matrix Item</button>
+                    <button onclick="addGraphicOrganizerAsset()" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-xs">Save Card Matrix</button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-amber-600">👤 Logged Characters</h4><div id="go-list-who" class="grid grid-cols-2 gap-3"></div></div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-blue-600">📍 Logged Settings & Places</h4><div id="go-list-where" class="grid grid-cols-2 gap-3"></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-amber-600 text-sm">👤 Uploaded Characters (Who)</h4><div id="go-list-who" class="grid grid-cols-2 gap-2"></div></div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-blue-600 text-sm">📍 Uploaded Places (Where)</h4><div id="go-list-where" class="grid grid-cols-2 gap-2"></div></div>
                 </div>
             </section>
 
-            <!-- VIEW C: SENTENCE FRAMES CONFIG MANAGER PAGE -->
-            <section id="view-frames" class="view-panel hidden space-y-6">
+            <!-- VIEWS 3-7: SENTENCE FRAMES SUB-PAGES ENGINE -->
+            <section id="view-frames-container" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">Sentence Framework Configuration Hub</h2>
-                    <p class="text-sm text-slate-500">Customize the phrase templates given to students across each functional segment level block.</p>
+                    <h2 id="frames-page-title" class="text-3xl font-bold tracking-tight text-slate-800">Sentence Frames Hub</h2>
+                    <p class="text-sm text-slate-500">Create multiple independent labeled frame groups for varying educational tracks.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="frames-config-grid"></div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-3">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase">📁 Create New Labeled Sentence Frame Set</h3>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-frameset-label" placeholder="e.g., Book Report Starters, Daily Tracker" class="flex-1 px-3 py-2 border rounded-xl text-xs font-semibold bg-slate-50 shadow-inner" />
+                        <button onclick="createNewSentenceFrameCollection()" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all shadow-sm">Create Empty Set</button>
+                    </div>
+                </div>
+                <div id="frames-collections-wrapper" class="space-y-4"></div>
             </section>
 
-            <!-- VIEW D: WORD BANKS CONFIG MANAGER PAGE -->
-            <section id="view-wordbanks" class="view-panel hidden space-y-6">
+            <!-- VIEWS 8-12: WORD BANKS SUB-PAGES ENGINE -->
+            <section id="view-wordbanks-container" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">Word Bank Customization Studio</h2>
-                    <p class="text-sm text-slate-500">Build interactive vocabulary arrays. Assign custom programmatic accent hex colors for each category column layer.</p>
+                    <h2 id="wordbanks-page-title" class="text-3xl font-bold tracking-tight text-slate-800">Word Banks Studio</h2>
+                    <p class="text-sm text-slate-500">Manage multiple compartmentalized word collections featuring user-selected color codings.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="wordbanks-config-grid"></div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-3">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase">📁 Create New Labeled Word Bank Set</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="text" id="new-wordbank-label" placeholder="e.g., Family Members, Emotions" class="sm:col-span-2 px-3 py-2 border rounded-xl text-xs font-semibold bg-slate-50 shadow-inner" />
+                        <div class="flex items-center gap-2">
+                            <label class="text-[10px] uppercase font-bold text-slate-400">Color:</label>
+                            <input type="color" id="new-wordbank-color" value="#3b82f6" class="w-full h-8 rounded border cursor-pointer bg-transparent" />
+                        </div>
+                    </div>
+                    <button onclick="createNewWordBankCollection()" class="w-full py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl shadow-sm transition-all">Instantiate Named Word Bank</button>
+                </div>
+                <div id="wordbanks-collections-wrapper" class="space-y-4"></div>
             </section>
 
-            <!-- VIEW E: MY STORIES PORTFOLIO HUB PAGE -->
+            <!-- VIEW 13: MY STORIES DIRECT TIMELINE LIST -->
             <section id="view-stories" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">My Saved Stories Log</h2>
-                    <p class="text-sm text-slate-500">Review, re-verify, edit, or remove historically compiled tracking records saved on this engine.</p>
+                    <h2 class="text-3xl font-bold tracking-tight">Saved Stories Archive</h2>
+                    <p class="text-sm text-slate-500">Review compiled tracking reports stored locally on this machine interface device.</p>
                 </div>
                 <div id="saved-stories-container" class="space-y-4"></div>
             </section>
 
-            <!-- VIEW F: SYSTEM SETTINGS MANAGEMENT PAGE -->
+            <!-- VIEW 14: MULTI-ACCESS MODAL SYSTEM SETTINGS SECTION -->
             <section id="view-settings" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">System Settings Configuration</h2>
-                    <p class="text-sm text-slate-500">Modify global application layout rendering frameworks, custom typographic weights, and text-to-speech synthesize profiles.</p>
+                    <h2 class="text-3xl font-bold tracking-tight">System Preferences Hub</h2>
+                    <p class="text-sm text-slate-500">Configure visual themes, structural weights, and perform native voice synthesize tests.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-4">
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-5">
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Interface System Design Palette Theme</label>
-                        <select id="settings-theme" onchange="applySystemTheme(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold">
-                            <option value="sky">Classic Sky Blue Canvas Profile</option>
-                            <option value="slate">Dusk Slate Dark Mode Architecture</option>
-                            <option value="lavender">Calm Lavender Accent Profile</option>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Visual UI Themes Profile Canvas</label>
+                        <select id="settings-theme" onchange="applySystemTheme(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-xs font-semibold">
+                            <option value="sky">Classic Sky Blue Profile Canvas</option>
+                            <option value="slate">Dusk Slate High-Fidelity Charcoal</option>
+                            <option value="lavender">Calm Amethyst Lavender Field</option>
+                            <option value="mint">Fresh Emerald Botanical Mint</option>
+                            <option value="sunflower">High Contrast Warm Amber Sunflower</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Typographic Accessibility Font Metric Face</label>
-                        <select id="settings-font" onchange="applySystemFont(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold">
-                            <option value="font-fredoka">Fredoka Dynamic High Visibility Rounded</option>
-                            <option value="font-inter">Inter Standard Corporate Minimalist Line</option>
-                            <option value="font-dyslexic">OpenDyslexic Assistive Reading Engine</option>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Accessibility Typography Metrics Configuration</label>
+                        <select id="settings-font" onchange="applySystemFont(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-xs font-semibold">
+                            <option value="font-fredoka">Fredoka Balanced Proportional Rounded</option>
+                            <option value="font-inter">Inter Technical Linear Geometric Sans</option>
+                            <option value="font-comic">Comic Neue Friendly High Legibility</option>
+                            <option value="font-lexend">Lexend Specialized Reading Comprehension Sans</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Vocal Speech Synthesizer Output Voice Engine Profile</label>
-                        <select id="settings-voice" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold"></select>
-                    </div>
-                    <div class="pt-4 border-t flex gap-2">
-                        <button onclick="exportSystemConfiguration()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all">📤 Backup Configuration Profile</button>
-                        <button onclick="importSystemConfigurationPrompt()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all">📥 Load Backup Configuration</button>
+                    <div class="border-t pt-4 space-y-2">
+                        <label class="block text-sm font-bold text-slate-700">Audio Speech Synthesizer Voice Select Engine</label>
+                        <div class="flex gap-2">
+                            <select id="settings-voice" class="flex-1 px-3 py-2 border rounded-xl bg-slate-50 text-xs font-semibold"></select>
+                            <button onclick="executeVocalProfileAudioTest()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm">Test Voice 🔊</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -187,223 +229,471 @@
         </main>
     </div>
 
-    <!-- Core Database Engineering Logic Engine Block -->
+    <!-- Core Database Application Router Manifest Engine Logic -->
     <script>
-        // Reactive In-Memory Layout Configuration Baselines Matrices
-        const channels = ["who", "where", "what", "why", "reflection"];
-        
-        // Setup Functional Core Cache Layer Defaults Data
-        const baselineData = {
+        const activeChannels = ["who", "where", "what", "why", "reflection"];
+        let activeRouteChannelTarget = null; 
+        let openWorkspaceAccordion = null; 
+        let openConfigAccordions = {}; 
+
+        // Refined Schema Architecture Database Base Config File Layout Template
+        const defaultAppStructureDatabasePayload = {
             sentence_frames: {
-                who: ["Today, I interacted with", "Our main team group included", "I spent my time with"],
-                where: ["We completed our tasks at the", "I executed assignments inside the", "We traveled over to the"],
-                what: ["The core activity completed was", "I practiced specialized skills in", "We worked directly on processing"],
-                why: ["This was necessary because", "I worked on this module to ensure I build", "This project was selected so I can master"],
-                reflection: ["My personal assessment is that it was", "Looking back, I evaluated the performance as", "I anticipate future assignments will be"]
+                who: [{ id: 'sf-who-1', label: 'Daily School Routine', items: ["Today, I interacted with", "Our class group included"] }],
+                where: [{ id: 'sf-where-1', label: 'Daily School Routine', items: ["We completed tasks at the", "I executed work inside the"] }],
+                what: [{ id: 'sf-what-1', label: 'Daily School Routine', items: ["The main assignment done was", "I spent time processing"] }],
+                why: [{ id: 'sf-why-1', label: 'Daily School Routine', items: ["This was necessary because", "I did this task to build"] }],
+                reflection: [{ id: 'sf-refl-1', label: 'Daily School Routine', items: ["My view of it was that it felt", "Looking back, I thought it was"] }]
             },
             word_banks: {
-                who: { color: "#d97706", words: ["Mom and Dad", "my classmates", "the instructional teacher", "myself independently"] },
-                where: { color: "#2563eb", words: ["school playground", "central media lab library", "vocational training center", "home workspace"] },
-                what: { color: "#059669", words: ["painting a canvas artwork", "reading an educational chapter", "sorting functional components", "completing physical health exercises"] },
-                why: { color: "#db2777", words: ["it was part of my scheduled goals", "we wanted to learn new things", "it helps build my independence", "my schedule timeline required it"] },
-                reflection: { color: "#7c3aed", words: ["highly successful and awesome!", "completely calm and manageable", "somewhat difficult / required extra effort", "tiring and required modifications"] }
+                who: [{ id: 'wb-who-1', label: 'Family Members', color: '#d97706', items: ["Mom and Dad", "my brother and sister", "grandparents"] }],
+                where: [{ id: 'wb-where-1', label: 'Campus Locations', color: '#2563eb', items: ["the school playground", "the library media lab", "the cafeteria lunch room"] }],
+                what: [{ id: 'wb-what-1', label: 'Core Activities', color: '#059669', items: ["painting a canvas picture", "reading an adventure chapter", "practicing math operations"] }],
+                why: [{ id: 'wb-why-1', label: 'IEP Objective Targets', color: '#db2777', items: ["it helps grow my independence", "we wanted to learn new facts", "it was part of my schedule"] }],
+                reflection: [{ id: 'wb-refl-1', label: 'Emotional State Checks', color: '#7c3aed', items: ["super awesome and fun!", "calm and focused", "a little bit hard for me"] }]
             },
             organizers: [],
             stories: [],
             active_selections: { who: { frame:'', word:'' }, where: { frame:'', word:'' }, what: { frame:'', word:'' }, why: { frame:'', word:'' }, reflection: { frame:'', word:'' } },
+            active_config_pointers: { who: { frameId:'sf-who-1', bankId:'wb-who-1' }, where: { frameId:'sf-where-1', bankId:'wb-where-1' }, what: { frameId:'sf-what-1', bankId:'wb-what-1' }, why: { frameId:'sf-why-1', bankId:'wb-why-1' }, reflection: { frameId:'sf-refl-1', bankId:'wb-refl-1' } },
             preferences: { theme: 'sky', font: 'font-fredoka', voiceURI: '' }
         };
 
-        // Initialize App State Storage Pointer Variables
-        let DB = JSON.parse(localStorage.getItem('msb_v2_database')) || baselineData;
-        let openAccordionTab = null;
+        let DB = JSON.parse(localStorage.getItem('msb_v3_platform_database')) || defaultAppStructureDatabasePayload;
+        
+        // Data Migration Protection Code Layer Block for Legacy Cache Layout Upgrades
+        if(!DB.active_config_pointers) { DB = defaultAppStructureDatabasePayload; localStorage.setItem('msb_v3_platform_database', JSON.stringify(DB)); }
 
-        function saveDB() {
-            localStorage.setItem('msb_v2_database', JSON.stringify(DB));
+        function commitLocalStorage() {
+            localStorage.setItem('msb_v3_platform_database', JSON.stringify(DB));
         }
 
-        // SPA Navigation Framework Route Pipeline Dispatcher Engine
+        // Expanded SPA Routing Manifest Engine Dispatches
         function switchView(target) {
             document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`view-${target}`).classList.remove('hidden');
             
-            document.querySelectorAll('#sidebar-nav nav button').forEach(b => {
-                b.className = "w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100";
+            // Clean active horizontal selections
+            document.querySelectorAll('#sidebar-nav nav button, #sidebar-nav pl-4 button').forEach(b => {
+                b.classList.remove('bg-sky-500', 'bg-indigo-600', 'text-white', 'shadow-sm');
+                b.classList.add('text-slate-600');
             });
-            const activeBtn = document.getElementById(`nav-${target}`);
-            if(activeBtn && target !== 'settings') {
-                const skyTheme = DB.preferences.theme === 'sky';
-                activeBtn.className = `w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all ${DB.preferences.theme === 'slate' ? 'bg-indigo-600' : 'bg-sky-500'} text-white shadow-sm`;
+
+            // Parse sub-route parameters
+            if(target.startsWith('frames-')) {
+                activeRouteChannelTarget = target.split('-')[1];
+                document.getElementById('view-frames-container').classList.remove('hidden');
+                document.getElementById('frames-page-title').innerText = `Sentence Frames: ${activeRouteChannelTarget.toUpperCase()}`;
+                document.getElementById(`nav-frames-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-200 text-slate-800";
+                renderFramesSubCollectionsCanvas();
+                return;
+            }
+            if(target.startsWith('wordbanks-')) {
+                activeRouteChannelTarget = target.split('-')[1];
+                document.getElementById('view-wordbanks-container').classList.remove('hidden');
+                document.getElementById('wordbanks-page-title').innerText = `Word Banks: ${activeRouteChannelTarget.toUpperCase()}`;
+                document.getElementById(`nav-wordbanks-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-200 text-slate-800";
+                renderWordBanksSubCollectionsCanvas();
+                return;
             }
 
-            // Route Specific Component Mount Lifecycle Hooks
-            if(target === 'create') renderAccordionCanvas();
-            if(target === 'organizers') renderOrganizersCanvas();
-            if(target === 'frames') renderFramesConfigCanvas();
-            if(target === 'wordbanks') renderWordBanksConfigCanvas();
-            if(target === 'stories') renderStoriesPortfolioCanvas();
-            if(target === 'settings') loadSettingsConfigurationPanel();
+            document.getElementById(`view-${target}`).classList.remove('hidden');
+            const navBtn = document.getElementById(`nav-${target}`);
+            if(navBtn && target !== 'settings') {
+                navBtn.className = `w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all ${DB.preferences.theme === 'slate' ? 'bg-indigo-600' : 'bg-sky-500'} text-white shadow-sm`;
+            }
+
+            if(target === 'create') renderWorkspaceAccordionCanvas();
+            if(target === 'organizers') renderGraphicOrganizersCanvas();
+            if(target === 'stories') renderStoriesTimelineArchiveCanvas();
+            if(target === 'settings') loadSettingsControlCanvas();
         }
 
-        // ==========================================
-        // MODULE 1: CREATE VIEW ACCORDION ENGINE
-        // ==========================================
-        function renderAccordionCanvas() {
-            const acc = document.getElementById('vertical-accordion');
-            acc.innerHTML = channels.map((ch, idx) => {
-                const isOpen = openAccordionTab === ch;
-                const config = DB.word_banks[ch];
+        function toggleSubnav(id) {
+            const el = document.getElementById(id);
+            const arrow = document.getElementById(`arrow-${id}`);
+            const isOpen = el.classList.contains('open');
+            if(isOpen) { el.classList.remove('open'); arrow.innerText = '▶'; } else { el.classList.add('open'); arrow.innerText = '▼'; }
+        }
+
+        // ========================================================
+        // COMPONENT 1: CREATE VIEW ARCHITECTURE ACCORDION ENGINE
+        // ========================================================
+        function renderWorkspaceAccordionCanvas() {
+            const wrapper = document.getElementById('vertical-accordion');
+            wrapper.innerHTML = activeChannels.map(ch => {
+                const isOpen = openWorkspaceAccordion === ch;
                 const active = DB.active_selections[ch];
                 
-                // Read display labels
-                const titleText = ch.toUpperCase();
-                const displaySummaryText = (active.frame || active.word) ? `"${active.frame} ... ${active.word}"` : 'Empty selection slot...';
+                // Fetch dynamic collections
+                const frameCollections = DB.sentence_frames[ch] || [];
+                const bankCollections = DB.word_banks[ch] || [];
+                
+                const ptr = DB.active_config_pointers[ch];
+                const activeFrameSet = frameCollections.find(f => f.id === ptr.frameId) || frameCollections[0] || { items: [] };
+                const activeBankSet = bankCollections.find(b => b.id === ptr.bankId) || bankCollections[0] || { items: [], color: '#64748b' };
+
+                const labelSummary = (active.frame || active.word) ? `"${active.frame} ... ${active.word}"` : 'No active selection recorded...';
 
                 return `
                     <div class="bg-white border rounded-2xl shadow-sm overflow-hidden border-slate-200">
-                        <button onclick="toggleAccordionTab('${ch}')" class="w-full px-5 py-4 text-left flex justify-between items-center bg-slate-50 border-b hover:bg-slate-100/80 transition-all">
-                            <div>
-                                <span class="text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded-md text-white mr-2" style="background-color: ${config.color}">${titleText}</span>
-                                <span class="text-xs text-slate-400 font-semibold" id="acc-lbl-${ch}">${displaySummaryText}</span>
+                        <button onclick="toggleWorkspaceAccordionTab('${ch}')" class="w-full px-5 py-4 text-left flex justify-between items-center bg-slate-50/80 border-b hover:bg-slate-100 transition-all">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded text-white text-center" style="background-color: ${activeBankSet.color || '#64748b'}">${ch}</span>
+                                <span class="text-xs text-slate-400 font-semibold truncate max-w-md">${labelSummary}</span>
                             </div>
-                            <span class="text-sm text-slate-400">${isOpen ? '▼' : '▶'}</span>
+                            <span class="text-xs text-slate-400">${isOpen ? '▼' : '▶'}</span>
                         </button>
                         <div class="accordion-content ${isOpen ? 'open' : ''} space-y-4">
-                            <!-- Sentence Frames Array Blocks Row -->
-                            <div>
-                                <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Select Target Frame Starter phrase:</h4>
-                                <div class="flex flex-wrap gap-1.5">
-                                    ${(DB.sentence_frames[ch] || []).map(fr => `
-                                        <button onclick="selectTokenItem('${ch}', 'frame', '${fr.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all ${active.frame === fr ? 'bg-slate-700 border-slate-700 text-white' : 'bg-white text-slate-700 hover:border-slate-300'}">${fr}</button>
-                                    `).join('')}
+                            
+                            <!-- Dynamic Internal Dropdown Selectors Row -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border">
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Target Sentence Frame Folder Collection</label>
+                                    <select onchange="changeActiveWorkspacePointer('${ch}', 'frameId', this.value)" class="w-full px-2 py-1 bg-white border rounded-lg text-xs font-semibold text-slate-700">
+                                        ${frameCollections.map(fs => `<option value="${fs.id}" ${ptr.frameId === fs.id ? 'selected' : ''}>${fs.label}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Target Word Bank Sub-Collection</label>
+                                    <select onchange="changeActiveWorkspacePointer('${ch}', 'bankId', this.value)" class="w-full px-2 py-1 bg-white border rounded-lg text-xs font-semibold text-slate-700">
+                                        ${bankCollections.map(wb => `<option value="${wb.id}" ${ptr.bankId === wb.id ? 'selected' : ''}>${wb.label}</option>`).join('')}
+                                    </select>
                                 </div>
                             </div>
-                            <!-- Word Banks Data Element Row Wrapper Grid -->
+
+                            <!-- Sentence Frame Selection Rendering Buttons Box -->
                             <div>
-                                <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Select Target Vocabulary Item:</h4>
-                                <div class="flex flex-wrap gap-1.5">
-                                    ${config.words.map(w => `
-                                        <button onclick="selectTokenItem('${ch}', 'word', '${w.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all ${active.word === w ? 'text-white shadow-inner font-bold' : 'bg-white text-slate-700 hover:border-slate-300'}" style="${active.word === w ? 'background-color:'+config.color+'; border-color:'+config.color : ''}">${w}</button>
-                                    `).join('')}
+                                <h4 class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">1. Select Custom Sentence Frame Starter:</h4>
+                                <div class="flex flex-wrap gap-1">
+                                    ${activeFrameSet.items ? activeFrameSet.items.map(fr => `
+                                        <button onclick="writeSelectionToken('${ch}', 'frame', '${fr.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all ${active.frame === fr ? 'bg-slate-700 border-slate-700 text-white font-bold' : 'bg-white text-slate-700 hover:border-slate-300'}">${fr}</button>
+                                    `).join('') : `<p class="text-xs italic text-slate-400">Empty frame set items.</p>`}
+                                </div>
+                            </div>
+
+                            <!-- Word Bank Button Choice Target Core Grid Layout Block -->
+                            <div>
+                                <h4 class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">2. Injected Target Vocabulary Selections:</h4>
+                                <div class="flex flex-wrap gap-1">
+                                    ${activeBankSet.items ? activeBankSet.items.map(w => `
+                                        <button onclick="writeSelectionToken('${ch}', 'word', '${w.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all" style="${active.word === w ? 'background-color:'+activeBankSet.color+'; border-color:'+activeBankSet.color+'; color:#fff; font-weight:700;' : 'background-color:#fff; color:#334155;'}">${w}</button>
+                                    `).join('') : ''}
                                     
-                                    <!-- Render Contextual Graphic Organizer Association Cards inside Who/Where components -->
-                                    ${(ch === 'who' || ch === 'where') ? DB.organizers.filter(o => o.type === ch).map(card => `
-                                        <button onclick="selectTokenItem('${ch}', 'word', '${card.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all ${active.word === card.name ? 'text-white shadow-inner font-bold' : 'bg-amber-50/60 text-slate-700 border-amber-200 hover:border-amber-300'}" style="${active.word === card.name ? 'background-color:'+config.color+'; border-color:'+config.color : ''}">
-                                            ${card.img ? `<img src="${card.img}" class="w-4 h-4 object-cover rounded-md" />` : '🖼️'} ${card.name}
+                                    <!-- Context Graphic Organizers Integration Check -->
+                                    ${(ch === 'who' || ch === 'where') ? DB.organizers.filter(o => o.type === ch).map(org => `
+                                        <button onclick="writeSelectionToken('${ch}', 'word', '${org.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all" style="${active.word === org.name ? 'background-color:'+activeBankSet.color+'; border-color:'+activeBankSet.color+'; color:#fff; font-weight:700;' : 'background-color:#fff; color:#475569;'}">
+                                            ${org.img ? `<img src="${org.img}" class="w-4 h-4 object-cover rounded" />` : '🖼️'} ${org.name}
                                         </button>
                                     `).join('') : ''}
                                 </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            updateLiveTextCompositeBlockPanel();
+        }
+
+        function toggleWorkspaceAccordionTab(ch) {
+            openWorkspaceAccordion = (openWorkspaceAccordion === ch) ? null : ch;
+            renderWorkspaceAccordionCanvas();
+        }
+
+        function changeActiveWorkspacePointer(ch, parameter, targetId) {
+            DB.active_config_pointers[ch][parameter] = targetId;
+            commitLocalStorage();
+            renderWorkspaceAccordionCanvas();
+        }
+
+        function writeSelectionToken(ch, layer, val) {
+            DB.active_selections[ch][layer] = val;
+            commitLocalStorage();
+            renderWorkspaceAccordionCanvas();
+        }
+
+        function updateLiveTextCompositeBlockPanel() {
+            const display = document.getElementById('live-text-composite');
+            const fragments = [];
+
+            activeChannels.forEach(ch => {
+                const act = DB.active_selections[ch];
+                const bankSet = (DB.word_banks[ch] || []).find(b => b.id === DB.active_config_pointers[ch].bankId) || { color: '#475569' };
+                if(act.frame || act.word) {
+                    fragments.push(`<span>${act.frame}</span> <span style="color: ${bankSet.color}; font-weight:700;">${act.word || '...'}</span>.`);
+                }
+            });
+
+            if(fragments.length === 0) {
+                display.innerHTML = `Make selections from the vertical accordion blocks to generate sentence structures...`;
+                display.className = "space-y-2 text-lg leading-relaxed text-slate-400 italic";
+            } else {
+                display.innerHTML = fragments.join(" ");
+                display.className = "space-y-2 text-lg leading-relaxed text-slate-800 font-semibold transition-all";
+            }
+        }
+
+        function saveActiveStory() {
+            const titleElement = document.getElementById('active-story-title');
+            const title = titleElement.value.trim() || `Social Record (${new Date().toLocaleDateString()})`;
+            
+            const textLines = [];
+            activeChannels.forEach(ch => {
+                const act = DB.active_selections[ch];
+                if(act.frame || act.word) textLines.push(`${act.frame} ${act.word || '...'}.`);
+            });
+
+            if(textLines.length === 0) { alert("The active construction grid sheet is blank."); return; }
+
+            const packageObj = { id: Date.now(), title, content: textLines.join(" "), timestamp: new Date().toLocaleString() };
+            DB.stories.unshift(packageObj);
+            
+            // Clear selections
+            activeChannels.forEach(ch => { DB.active_selections[ch] = { frame:'', word:'' }; });
+            titleElement.value = "";
+            commitLocalStorage();
+            
+            confetti({ particleCount: 140, spread: 70, origin: { y: 0.6 } });
+            alert("✨ Social story logged into archive timeline successfully!");
+            renderWorkspaceAccordionCanvas();
+        }
+
+        function speakActiveText() {
+            const rawText = document.getElementById('live-text-composite').innerText;
+            if(rawText.includes("Make selections")) return;
+            executeAudioVoiceSpeechSynthesis(rawText);
+        }
+
+        function executeAudioVoiceSpeechSynthesis(txt) {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(txt);
+            const voiceURI = DB.preferences.voiceURI;
+            if(voiceURI) {
+                const matchedVoice = window.speechSynthesis.getVoices().find(v => v.voiceURI === voiceURI);
+                if(matchedVoice) utterance.voice = matchedVoice;
+            }
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // ========================================================
+        // COMPONENT 2: SENTENCE FRAMES MODULAR SUB-PAGES ENGINE
+        // ========================================================
+        function renderFramesSubCollectionsCanvas() {
+            const wrapper = document.getElementById('frames-collections-wrapper');
+            const collections = DB.sentence_frames[activeRouteChannelTarget] || [];
+
+            wrapper.innerHTML = collections.map(set => {
+                const isExpanded = openConfigAccordions[set.id] !== false; 
+                return `
+                    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                        <div class="px-5 py-3 bg-slate-50 flex justify-between items-center border-b">
+                            <button onclick="toggleConfigAccordion('${set.id}')" class="font-bold text-slate-700 text-sm hover:text-sky-600 flex items-center gap-2">
+                                📁 ${set.label} <span class="text-xs text-slate-400 font-normal">(${set.items.length} frames)</span>
+                            </button>
+                            <button onclick="deleteSentenceFrameCollection('${set.id}')" class="text-xs font-semibold text-red-400 hover:text-red-600">Delete Entire Folder</button>
+                        </div>
+                        <div class="p-4 space-y-3 ${isExpanded ? '' : 'hidden'}">
+                            <div class="space-y-1.5">
+                                ${set.items.map((item, idx) => `
+                                    <div class="flex items-center justify-between bg-slate-50 border p-2 rounded-xl text-xs font-semibold">
+                                        <span class="truncate flex-1 pr-4">${item}</span>
+                                        <div class="flex gap-2 flex-shrink-0">
+                                            <button onclick="editSentenceFrameEntry('${set.id}', ${idx})" class="text-sky-600 hover:text-sky-800">Edit</button>
+                                            <button onclick="deleteSentenceFrameEntry('${set.id}', ${idx})" class="text-red-400 hover:text-red-600">✕</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="flex gap-2 pt-2 border-t">
+                                <input type="text" id="input-add-frame-${set.id}" placeholder="Type new frame starter sentence structure..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs bg-slate-50" />
+                                <button onclick="addSentenceFrameItem('${set.id}')" class="px-4 py-1.5 bg-slate-700 text-white font-bold text-xs rounded-xl hover:bg-slate-800">Add Phrase</button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
-            updateLiveCompositePanelOutput();
         }
 
-        function toggleAccordionTab(ch) {
-            openAccordionTab = (openAccordionTab === ch) ? null : ch;
-            renderAccordionCanvas();
+        function createNewSentenceFrameCollection() {
+            const input = document.getElementById('new-frameset-label');
+            const label = input.value.trim();
+            if(!label) return;
+
+            const newCollection = { id: 'sf-' + Date.now(), label, items: [] };
+            DB.sentence_frames[activeRouteChannelTarget].push(newCollection);
+            commitLocalStorage();
+            input.value = "";
+            renderFramesSubCollectionsCanvas();
         }
 
-        function selectTokenItem(ch, layer, value) {
-            DB.active_selections[ch][layer] = value;
-            saveDB();
-            renderAccordionCanvas();
-        }
-
-        function updateLiveCompositePanelOutput() {
-            const out = document.getElementById('live-text-composite');
-            const constructedPhrasesArray = [];
-
-            channels.forEach(ch => {
-                const act = DB.active_selections[ch];
-                const col = DB.word_banks[ch].color;
-                if(act.frame || act.word) {
-                    constructedPhrasesArray.push(`<span>${act.frame}</span> <span style="color: ${col}; font-weight: 700;">${act.word || '...'}</span>.`);
-                }
-            });
-
-            if(constructedPhrasesArray.length === 0) {
-                out.innerHTML = `Paragraph text will render here as selections are logged into the builder tool layers...`;
-                out.className = "space-y-2 text-lg leading-relaxed text-slate-400 italic";
+        function toggleConfigAccordion(id) {
+            openConfigAccordions[id] = openConfigAccordions[id] === false;
+            if(document.getElementById('view-frames-container').classList.contains('hidden')) {
+                renderWordBanksSubCollectionsCanvas();
             } else {
-                out.innerHTML = constructedPhrasesArray.join(" ");
-                out.className = "space-y-2 text-lg leading-relaxed text-slate-800 transition-all font-semibold";
+                renderFramesSubCollectionsCanvas();
             }
         }
 
-        function compileActiveParagraph() {
-            // Evaluates active selections block and pops up confirmation notification summary metrics window
-            const lines = [];
-            channels.forEach(ch => {
-                const act = DB.active_selections[ch];
-                if(act.frame || act.word) lines.push(`${act.frame} ${act.word || '...'}.`);
-            });
-            
-            if(lines.length === 0) {
-                alert("The builder workspace canvas currently contains no selections to construct a narrative paragraph.");
-                return;
-            }
-            confetti({ particleCount: 120, spread: 60 });
-            alert(`📑 Compiled Paragraph Composite View:\n\n${lines.join(" ")}`);
+        function addSentenceFrameItem(setId) {
+            const input = document.getElementById(`input-add-frame-${setId}`);
+            const val = input.value.trim();
+            if(!val) return;
+
+            const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
+            if(targetSet) { targetSet.items.push(val); commitLocalStorage(); }
+            input.value = "";
+            renderFramesSubCollectionsCanvas();
         }
 
-        function saveActiveStory() {
-            const titleInput = document.getElementById('active-story-title');
-            const title = titleInput.value.trim() || `Untitled Narrative Report (${new Date().toLocaleDateString()})`;
+        function editSentenceFrameEntry(setId, idx) {
+            const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
+            if(!targetSet) return;
             
-            const lines = [];
-            channels.forEach(ch => {
-                const act = DB.active_selections[ch];
-                if(act.frame || act.word) lines.push(`${act.frame} ${act.word || '...'}.`);
-            });
-
-            if(lines.length === 0) {
-                alert("Cannot save an empty story asset framework.");
-                return;
+            const updatedText = prompt("Modify sentence frame template string:", targetSet.items[idx]);
+            if(updatedText && updatedText.trim() !== "") {
+                targetSet.items[idx] = updatedText.trim();
+                commitLocalStorage();
+                renderFramesSubCollectionsCanvas();
             }
-
-            const storyObj = {
-                id: Date.now(),
-                title: title,
-                content: lines.join(" "),
-                timestamp: new Date().toLocaleString()
-            };
-
-            DB.stories.unshift(storyObj);
-            titleInput.value = "";
-            
-            // Clear current working draft selections
-            channels.forEach(ch => { DB.active_selections[ch] = { frame:'', word:'' }; });
-            saveDB();
-            
-            alert("✨ Story successfully written and archived into My Stories Portfolio!");
-            renderAccordionCanvas();
         }
 
-        // ==========================================
-        // MODULE 2: GRAPHIC ORGANIZERS STORAGE
-        // ==========================================
-        function renderOrganizersCanvas() {
+        function deleteSentenceFrameEntry(setId, idx) {
+            const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
+            if(targetSet) { targetSet.items.splice(idx, 1); commitLocalStorage(); }
+            renderFramesSubCollectionsCanvas();
+        }
+
+        function deleteSentenceFrameCollection(setId) {
+            if(confirm("Permanently delete this entire folder asset framework configuration?")) {
+                DB.sentence_frames[activeRouteChannelTarget] = DB.sentence_frames[activeRouteChannelTarget].filter(s => s.id !== setId);
+                commitLocalStorage();
+                renderFramesSubCollectionsCanvas();
+            }
+        }
+
+        // ========================================================
+        // COMPONENT 3: WORD BANKS MODULAR MULTI-COLLECTION STUDIO
+        // ========================================================
+        function renderWordBanksSubCollectionsCanvas() {
+            const wrapper = document.getElementById('wordbanks-collections-wrapper');
+            const collections = DB.word_banks[activeRouteChannelTarget] || [];
+
+            wrapper.innerHTML = collections.map(bank => {
+                const isExpanded = openConfigAccordions[bank.id] !== false;
+                return `
+                    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                        <div class="px-5 py-3 bg-slate-50 flex justify-between items-center border-b" style="border-top: 4px solid ${bank.color}">
+                            <div class="flex items-center gap-3">
+                                <button onclick="toggleConfigAccordion('${bank.id}')" class="font-bold text-slate-700 text-sm hover:text-sky-600 flex items-center gap-2">
+                                    🎯 ${bank.label} <span class="text-xs text-slate-400 font-normal">(${bank.items.length} choices)</span>
+                                </button>
+                                <input type="color" value="${bank.color}" onchange="updateWordBankCollectionColor('${bank.id}', this.value)" class="w-5 h-5 rounded cursor-pointer border" />
+                            </div>
+                            <button onclick="deleteWordBankCollection('${bank.id}')" class="text-xs font-semibold text-red-400 hover:text-red-600">Delete Entire Bank</button>
+                        </div>
+                        <div class="p-4 space-y-3 ${isExpanded ? '' : 'hidden'}">
+                            <div class="space-y-1.5">
+                                ${bank.items.map((item, idx) => `
+                                    <div class="flex items-center justify-between bg-slate-50 border p-2 rounded-xl text-xs font-semibold" style="border-left: 4px solid ${bank.color}">
+                                        <span class="truncate flex-1 pr-4">${item}</span>
+                                        <div class="flex gap-2 flex-shrink-0">
+                                            <button onclick="editWordBankEntry('${bank.id}', ${idx})" class="text-sky-600 hover:text-sky-800">Edit</button>
+                                            <button onclick="deleteWordBankEntry('${bank.id}', ${idx})" class="text-red-400 hover:text-red-600">✕</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="flex gap-2 pt-2 border-t">
+                                <input type="text" id="input-add-word-${bank.id}" placeholder="Type new target token item text..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs bg-slate-50" />
+                                <button onclick="addWordBankItem('${bank.id}')" class="px-4 py-1.5 bg-slate-700 text-white font-bold text-xs rounded-xl hover:bg-slate-800">Add Entry</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function createNewWordBankCollection() {
+            const labelInp = document.getElementById('new-wordbank-label');
+            const colorInp = document.getElementById('new-wordbank-color');
+            const label = labelInp.value.trim();
+            if(!label) return;
+
+            const newBank = { id: 'wb-' + Date.now(), label, color: colorInp.value, items: [] };
+            DB.word_banks[activeRouteChannelTarget].push(newBank);
+            commitLocalStorage();
+            labelInp.value = "";
+            renderWordBanksSubCollectionsCanvas();
+        }
+
+        function updateWordBankCollectionColor(bankId, hex) {
+            const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
+            if(target) { target.color = hex; commitLocalStorage(); }
+            renderWordBanksSubCollectionsCanvas();
+        }
+
+        function addWordBankItem(bankId) {
+            const input = document.getElementById(`input-add-word-${bankId}`);
+            const val = input.value.trim();
+            if(!val) return;
+
+            const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
+            if(target) { target.items.push(val); commitLocalStorage(); }
+            input.value = "";
+            renderWordBanksSubCollectionsCanvas();
+        }
+
+        function editWordBankEntry(bankId, idx) {
+            const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
+            if(!target) return;
+
+            const updated = prompt("Modify target word bank token identifier text:", target.items[idx]);
+            if(updated && updated.trim() !== "") {
+                target.items[idx] = updated.trim();
+                commitLocalStorage();
+                renderWordBanksSubCollectionsCanvas();
+            }
+        }
+
+        function deleteWordBankEntry(bankId, idx) {
+            const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
+            if(target) { target.items.splice(idx, 1); commitLocalStorage(); }
+            renderWordBanksSubCollectionsCanvas();
+        }
+
+        function deleteWordBankCollection(bankId) {
+            if(confirm("Permanently wipe this whole named word collection from data registries?")) {
+                DB.word_banks[activeRouteChannelTarget] = DB.word_banks[activeRouteChannelTarget].filter(b => b.id !== bankId);
+                commitLocalStorage();
+                renderWordBanksSubCollectionsCanvas();
+            }
+        }
+
+        // ========================================================
+        // COMPONENT 4: GRAPHIC ORGANIZERS VISUAL ENGINES
+        // ========================================================
+        function renderGraphicOrganizersCanvas() {
             const listWho = document.getElementById('go-list-who');
             const listWhere = document.getElementById('go-list-where');
             
-            const cardsWho = DB.organizers.filter(o => o.type === 'who');
-            const cardsWhere = DB.organizers.filter(o => o.type === 'where');
+            const whoAssets = DB.organizers.filter(o => o.type === 'who');
+            const whereAssets = DB.organizers.filter(o => o.type === 'where');
 
-            const template = (c) => `
-                <div class="p-2 border rounded-xl flex items-center justify-between bg-slate-50 gap-2">
-                    <div class="flex items-center gap-2 overflow-hidden">
-                        ${c.img ? `<img src="${c.img}" class="w-10 h-10 object-cover rounded-lg shadow-sm flex-shrink-0" />` : `<div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center text-xs flex-shrink-0">📁</div>`}
-                        <span class="text-xs font-bold truncate">${c.name}</span>
+            const makeCard = (obj) => `
+                <div class="p-2 border rounded-xl flex items-center justify-between bg-slate-50 gap-2 overflow-hidden">
+                    <div class="flex items-center gap-2 truncate">
+                        ${obj.img ? `<img src="${obj.img}" class="w-8 h-8 object-cover rounded-lg shadow-inner flex-shrink-0" />` : `<div class="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center text-[10px] text-slate-400 font-bold flex-shrink-0">IMG</div>`}
+                        <span class="text-xs font-bold truncate text-slate-700">${obj.name}</span>
                     </div>
-                    <button onclick="deleteOrganizerAsset(${c.id})" class="text-red-400 hover:text-red-600 text-xs px-1">✕</button>
+                    <button onclick="deleteOrganizerAssetCard(${obj.id})" class="text-xs text-red-400 hover:text-red-600 px-1">✕</button>
                 </div>
             `;
 
-            listWho.innerHTML = cardsWho.length ? cardsWho.map(template).join('') : `<p class="text-xs text-slate-400 italic">No custom profile character entries added yet.</p>`;
-            listWhere.innerHTML = cardsWhere.length ? cardsWhere.map(template).join('') : `<p class="text-xs text-slate-400 italic">No custom location settings added yet.</p>`;
+            listWho.innerHTML = whoAssets.length ? whoAssets.map(makeCard).join('') : `<p class="text-xs italic text-slate-400 p-2">No characters configured.</p>`;
+            listWhere.innerHTML = whereAssets.length ? whereAssets.map(makeCard).join('') : `<p class="text-xs italic text-slate-400 p-2">No settings configured.</p>`;
         }
 
         function addGraphicOrganizerAsset() {
@@ -411,284 +701,143 @@
             const name = document.getElementById('go-input-name').value.trim();
             const fileInput = document.getElementById('go-input-file');
 
-            if(!name) { alert("Please input a text character or setting name identifier."); return; }
-
+            if(!name) return;
             const file = fileInput.files[0];
-            if (file) {
+
+            if(file) {
                 const reader = new FileReader();
-                reader.onloadend = function () {
-                    const asset = { id: Date.now(), type, name, img: reader.result };
-                    DB.organizers.push(asset);
-                    saveDB();
-                    finalizeOrganizerInsertionReset(fileInput);
+                reader.onloadend = function() {
+                    DB.organizers.push({ id: Date.now(), type, name, img: reader.result });
+                    commitLocalStorage();
+                    resetOrganizerInputFields(fileInput);
                 };
                 reader.readAsDataURL(file);
             } else {
-                const asset = { id: Date.now(), type, name, img: null };
-                DB.organizers.push(asset);
-                saveDB();
-                finalizeOrganizerInsertionReset(fileInput);
+                DB.organizers.push({ id: Date.now(), type, name, img: null });
+                commitLocalStorage();
+                resetOrganizerInputFields(fileInput);
             }
         }
 
-        function finalizeOrganizerInsertionReset(fileInput) {
+        function resetOrganizerInputFields(fileInput) {
             document.getElementById('go-input-name').value = "";
             fileInput.value = "";
-            renderOrganizersCanvas();
+            renderGraphicOrganizersCanvas();
         }
 
-        function deleteOrganizerAsset(id) {
+        function deleteOrganizerAssetCard(id) {
             DB.organizers = DB.organizers.filter(o => o.id !== id);
-            saveDB();
-            renderOrganizersCanvas();
+            commitLocalStorage();
+            renderGraphicOrganizersCanvas();
         }
 
-        // ==========================================
-        // MODULE 3: CUSTOM CONFIG hubs (SENTENCES & WORDBANKS)
-        // ==========================================
-        function renderFramesConfigCanvas() {
-            const grid = document.getElementById('frames-config-grid');
-            grid.innerHTML = channels.map(ch => {
-                const arr = DB.sentence_frames[ch] || [];
-                return `
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-3">
-                        <h3 class="font-bold uppercase text-sm border-b pb-1 flex justify-between items-center text-slate-700">
-                            <span>💬 Component: ${ch}</span>
-                            <span class="text-xs font-normal text-slate-400">Total: ${arr.length}</span>
-                        </h3>
-                        <div class="space-y-1 max-h-36 overflow-y-auto">
-                            ${arr.map((f, i) => `
-                                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-lg border">
-                                    <span class="truncate font-semibold">${f}</span>
-                                    <button onclick="deleteFrameEntry('${ch}', ${i})" class="text-red-400 hover:text-red-600 ml-2">✕</button>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="flex gap-2 pt-2">
-                            <input type="text" id="input-frame-${ch}" placeholder="Type a new sentence starter..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs" />
-                            <button onclick="addFrameEntry('${ch}')" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs rounded-xl">Add</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function addFrameEntry(ch) {
-            const input = document.getElementById(`input-frame-${ch}`);
-            const val = input.value.trim();
-            if(!val) return;
-            if(!DB.sentence_frames[ch]) DB.sentence_frames[ch] = [];
-            DB.sentence_frames[ch].push(val);
-            saveDB();
-            input.value = "";
-            renderFramesConfigCanvas();
-        }
-
-        function deleteFrameEntry(ch, idx) {
-            DB.sentence_frames[ch].splice(idx, 1);
-            saveDB();
-            renderFramesConfigCanvas();
-        }
-
-        function renderWordBanksConfigCanvas() {
-            const grid = document.getElementById('wordbanks-config-grid');
-            grid.innerHTML = channels.map(ch => {
-                const data = DB.word_banks[ch];
-                return `
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-3">
-                        <div class="flex justify-between items-center border-b pb-1">
-                            <h3 class="font-bold uppercase text-sm text-slate-700">🎯 Wordbank: ${ch}</h3>
-                            <div class="flex items-center gap-2">
-                                <label class="text-[10px] uppercase font-bold text-slate-400">Accent:</label>
-                                <input type="color" value="${data.color}" onchange="updateWordBankColor('${ch}', this.value)" class="w-6 h-6 border rounded cursor-pointer" />
-                            </div>
-                        </div>
-                        <div class="space-y-1 max-h-36 overflow-y-auto">
-                            ${data.words.map((w, i) => `
-                                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-lg border" style="border-left-width: 4px; border-left-color: ${data.color}">
-                                    <span class="truncate font-semibold">${w}</span>
-                                    <button onclick="deleteWordBankEntry('${ch}', ${i})" class="text-red-400 hover:text-red-600 ml-2">✕</button>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="flex gap-2 pt-2">
-                            <input type="text" id="input-word-${ch}" placeholder="Type a new target vocabulary item..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs" />
-                            <button onclick="addWordBankEntry('${ch}')" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs rounded-xl">Add</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateWordBankColor(ch, hex) {
-            DB.word_banks[ch].color = hex;
-            saveDB();
-            renderWordBanksConfigCanvas();
-        }
-
-        function addWordBankEntry(ch) {
-            const input = document.getElementById(`input-word-${ch}`);
-            const val = input.value.trim();
-            if(!val) return;
-            DB.word_banks[ch].words.push(val);
-            saveDB();
-            input.value = "";
-            renderWordBanksConfigCanvas();
-        }
-
-        function deleteWordBankEntry(ch, idx) {
-            DB.word_banks[ch].words.splice(idx, 1);
-            saveDB();
-            renderWordBanksConfigCanvas();
-        }
-
-        // ==========================================
-        // MODULE 4: MY STORIES ARCHIVE PORTFOLIO
-        // ==========================================
-        function renderStoriesPortfolioCanvas() {
-            const container = document.getElementById('saved-stories-container');
+        // ========================================================
+        // COMPONENT 5: STORIES ARCHIVE PORTFOLIO MANAGER
+        // ========================================================
+        function renderStoriesTimelineArchiveCanvas() {
+            const output = document.getElementById('saved-stories-container');
             if(!DB.stories || DB.stories.length === 0) {
-                container.innerHTML = `<div class="bg-white p-8 rounded-2xl shadow-sm text-center text-slate-400 italic">No historically logged narrative reports compiled into portfolio timelines yet.</div>`;
+                output.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 italic border">The portfolio log does not contain any archived stories yet.</div>`;
                 return;
             }
 
-            container.innerHTML = DB.stories.map(st => `
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between md:flex-row items-start md:items-center gap-4">
+            output.innerHTML = DB.stories.map(st => `
+                <div class="bg-white p-5 rounded-2xl border flex flex-col justify-between md:flex-row items-start md:items-center gap-4 shadow-sm">
                     <div class="space-y-1 flex-1">
                         <div class="flex items-center gap-3">
-                            <h4 class="font-bold text-lg text-slate-800">${st.title}</h4>
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold">🕒 ${st.timestamp}</span>
+                            <h4 class="font-bold text-base text-slate-800">${st.title}</h4>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">🕒 ${st.timestamp}</span>
                         </div>
-                        <p class="text-sm text-slate-600 leading-relaxed font-medium">${st.content}</p>
+                        <p class="text-sm font-medium text-slate-600 leading-relaxed">${st.content}</p>
                     </div>
-                    <div class="flex gap-2 no-print self-end md:self-center">
-                        <button onclick="loadStoryToActiveWorkspace(${st.id})" class="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-xl text-xs font-bold transition-all">✏️ Edit</button>
-                        <button onclick="deleteStoryFromPortfolio(${st.id})" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl text-xs font-bold transition-all">✕ Delete</button>
+                    <div class="flex gap-2 self-end md:self-center">
+                        <button onclick="deleteStoryFromHistoricalLog(${st.id})" class="px-2.5 py-1 text-red-500 hover:bg-red-50 border border-red-100 rounded-lg text-xs font-bold transition-all">✕ Delete</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function loadStoryToActiveWorkspace(id) {
-            const target = DB.stories.find(st => st.id === id);
-            if(!target) return;
-            
-            // Complex text metrics parse approximation logic for simple draft editing extraction
-            alert("This operation will load your archived narrative text block directly into the live viewer panel sheet for reading and print outputs.");
-            document.getElementById('live-text-composite').innerText = target.content;
-            document.getElementById('live-text-composite').className = "space-y-2 text-lg leading-relaxed text-slate-800 font-semibold";
-            document.getElementById('active-story-title').value = target.title;
-            switchView('create');
-        }
-
-        function deleteStoryFromPortfolio(id) {
-            if(confirm("Confirm removal: Permanently remove this narrative report log from local storage portfolio memory?")) {
-                DB.stories = DB.stories.filter(st => st.id !== id);
-                saveDB();
-                renderStoriesPortfolioCanvas();
+        function deleteStoryFromHistoricalLog(id) {
+            if(confirm("Permanently erase this social story entry text block from browser profile memories?")) {
+                DB.stories = DB.stories.filter(s => s.id !== id);
+                commitLocalStorage();
+                renderStoriesTimelineArchiveCanvas();
             }
         }
 
-        // ==========================================
-        // MODULE 5: SYSTEM ACCESSIBILITY SETTINGS
-        // ==========================================
-        function loadSettingsConfigurationPanel() {
+        // ========================================================
+        // COMPONENT 6: SYSTEM SETTINGS AUDIO AUDIO PREVIEWS
+        // ========================================================
+        function loadSettingsControlCanvas() {
             document.getElementById('settings-theme').value = DB.preferences.theme || 'sky';
             document.getElementById('settings-font').value = DB.preferences.font || 'font-fredoka';
-            populateSpeechSynthesisVoiceDropdown();
+            buildSpeechSynthesisVoiceDropdownOptions();
+        }
+
+        function buildSpeechSynthesisVoiceDropdownOptions() {
+            const select = document.getElementById('settings-voice');
+            if(!window.speechSynthesis) return;
+
+            const voices = window.speechSynthesis.getVoices();
+            select.innerHTML = voices.map(v => `
+                <option value="${v.voiceURI}" ${DB.preferences.voiceURI === v.voiceURI ? 'selected' : ''}>${v.name} (${v.lang})</option>
+            `).join('');
+        }
+
+        function executeVocalProfileAudioTest() {
+            const select = document.getElementById('settings-voice');
+            if(!select || !select.value) return;
+
+            DB.preferences.voiceURI = select.value;
+            commitLocalStorage();
+
+            const targetVoice = window.speechSynthesis.getVoices().find(v => v.voiceURI === select.value);
+            const voiceName = targetVoice ? targetVoice.name : "System Standard";
+            
+            executeAudioVoiceSpeechSynthesis(`My name is ${voiceName}.`);
+        }
+
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                if(!document.getElementById('view-settings').classList.contains('hidden')) {
+                    buildSpeechSynthesisVoiceDropdownOptions();
+                }
+            };
         }
 
         function applySystemTheme(theme) {
             DB.preferences.theme = theme;
-            saveDB();
+            commitLocalStorage();
             const body = document.getElementById('app-body');
             
+            // Re-apply correct typography alongside color palette state alterations
+            const activeFont = DB.preferences.font || 'font-fredoka';
+            
             if(theme === 'slate') {
-                body.className = "bg-slate-950 text-slate-100 min-h-screen transition-colors duration-300 " + DB.preferences.font;
+                body.className = `bg-slate-950 text-slate-100 min-h-screen transition-colors duration-300 ${activeFont}`;
             } else if(theme === 'lavender') {
-                body.className = "bg-purple-50 text-slate-800 min-h-screen transition-colors duration-300 " + DB.preferences.font;
+                body.className = `bg-purple-50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
+            } else if(theme === 'mint') {
+                body.className = `bg-emerald-50/60 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
+            } else if(theme === 'sunflower') {
+                body.className = `bg-amber-50 text-slate-900 min-h-screen transition-colors duration-300 ${activeFont}`;
             } else {
-                body.className = "bg-sky-50 text-slate-800 min-h-screen transition-colors duration-300 " + DB.preferences.font;
+                body.className = `bg-sky-50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
             }
         }
 
         function applySystemFont(fontClass) {
             DB.preferences.font = fontClass;
-            saveDB();
-            
-            // Strip structural target class attributes
+            commitLocalStorage();
             const body = document.getElementById('app-body');
-            body.classList.remove('font-fredoka', 'font-inter', 'font-dyslexic');
+            body.classList.remove('font-fredoka', 'font-inter', 'font-comic', 'font-lexend');
             body.classList.add(fontClass);
         }
 
-        function populateSpeechSynthesisVoiceDropdown() {
-            const dropdown = document.getElementById('settings-voice');
-            if(!window.speechSynthesis) return;
-
-            const voices = window.speechSynthesis.getVoices();
-            dropdown.innerHTML = voices.map(v => `
-                <option value="${v.voiceURI}" ${DB.preferences.voiceURI === v.voiceURI ? 'selected' : ''}>${v.name} (${v.lang})</option>
-            `).join('');
-        }
-
-        // Execute background browser hardware synthesize hook checks
-        if (window.speechSynthesis) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                if(!document.getElementById('view-settings').classList.contains('hidden')) {
-                    populateSpeechSynthesisVoiceDropdown();
-                }
-            };
-        }
-
-        function speakText() {
-            const liveTxt = document.getElementById('live-text-composite').innerText;
-            if(liveTxt.includes("Paragraph text will render")) { alert("Workspace context is empty."); return; }
-            
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(liveTxt);
-            
-            const selectedVoiceURI = document.getElementById('settings-voice')?.value;
-            if(selectedVoiceURI) {
-                const voice = window.speechSynthesis.getVoices().find(v => v.voiceURI === selectedVoiceURI);
-                if(voice) utterance.voice = voice;
-            }
-            utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // Backup Configuration Systems (JSON Import/Export Data Management Channels)
-        function exportSystemConfiguration() {
-            const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `msb_configuration_backup_${Date.now()}.json`;
-            a.click();
-        }
-
-        function importSystemConfigurationPrompt() {
-            const fileStringInput = prompt("Paste your raw exported JSON configuration data manifest string package text layer inside this window slot directly:");
-            if(!fileStringInput) return;
-            try {
-                const parsed = JSON.parse(fileStringInput);
-                if(parsed.sentence_frames && parsed.word_banks) {
-                    DB = parsed;
-                    saveDB();
-                    alert("✨ Profile system configurations updated successfully!");
-                    window.location.reload();
-                } else {
-                    alert("Validation fault: Missing required internal structural criteria data keys inside JSON manifest packet.");
-                }
-            } catch (err) {
-                alert("Error compilation fail: Input text package does not conform to valid standardized structural code profiles.");
-            }
-        }
-
-        // App Initialization Sequence Trigger Loop
+        // Bootstrapping Sequence Initial Execution Loop Callouts
         applySystemFont(DB.preferences.font);
         applySystemTheme(DB.preferences.theme);
-        renderAccordionCanvas();
+        renderWorkspaceAccordionCanvas();
     </script>
 </body>
 </html>
