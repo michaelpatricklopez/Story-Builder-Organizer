@@ -7,220 +7,243 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;600&family=Comic+Neue:wght@400;700&family=Lexend:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;500;600&family=Comic+Neue:wght@400;700&family=Lexend:wght@400;500;600&display=swap');
         
-        /* Global typography profile definitions */
         .font-fredoka { font-family: 'Fredoka', sans-serif; }
         .font-inter { font-family: 'Inter', sans-serif; }
         .font-comic { font-family: 'Comic Neue', cursive; }
         .font-lexend { font-family: 'Lexend', sans-serif; }
 
-        /* Smooth visual animations for UI subfolders and collection components */
-        .subnav-menu { transition: max-height 0.25s ease-out; max-height: 0; overflow: hidden; }
-        .subnav-menu.open { max-height: 300px; }
-        .accordion-content { transition: max-height 0.3s ease-out, padding 0.3s ease; max-height: 0; overflow: hidden; }
-        .accordion-content.open { max-height: 1000px; padding: 1rem; }
+        .subnav-menu { transition: max-height 0.2s ease-out; max-height: 0; overflow: hidden; }
+        .subnav-menu.open { max-height: 350px; }
+        .accordion-content { transition: max-height 0.25s ease-out; max-height: 0; overflow: hidden; }
+        .accordion-content.open { max-height: 1200px; padding: 1.25rem; }
+        
+        /* Highlight text areas ready for immediate user modification */
+        [contenteditable="true"]:focus { outline: 2px solid #3b82f6; background-color: #f8fafc; border-radius: 0.375rem; padding: 0 0.25rem; }
     </style>
 </head>
-<body id="app-body" class="bg-sky-50 text-slate-800 min-h-screen font-fredoka transition-colors duration-300">
+<body id="app-body" class="bg-slate-50 text-slate-800 min-h-screen font-inter transition-colors duration-300">
 
     <div class="flex flex-col md:flex-row min-h-screen">
-        <!-- Sidebar Shell Panel -->
-        <aside id="sidebar-nav" class="w-full md:w-64 bg-white shadow-md md:min-h-screen p-4 flex flex-col justify-between border-r border-slate-100 no-print">
-            <div class="space-y-4">
-                <div class="p-2 pb-4 border-b">
-                    <h1 class="text-2xl font-bold text-sky-600 tracking-tight flex items-center gap-2">📖 Story Builder</h1>
-                    <p class="text-xs text-slate-400 mt-1">Multi-Tier Scaffolding Engine</p>
+        <!-- Professional Sidebar Navigation -->
+        <aside id="sidebar-nav" class="w-full md:w-64 bg-white shadow-sm md:min-h-screen p-5 flex flex-col justify-between border-r border-slate-200 no-print">
+            <div class="space-y-5">
+                <div class="pb-4 border-b border-slate-100">
+                    <h1 class="text-xl font-semibold text-slate-900 tracking-tight">My Story Builder</h1>
+                    <p class="text-xs text-slate-400 mt-0.5">Clinical & Educational Scaffolding</p>
                 </div>
                 
                 <nav class="space-y-1">
-                    <button onclick="switchView('create')" id="nav-create" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all bg-sky-500 text-white shadow-sm">✨ Create Story</button>
-                    <button onclick="switchView('organizers')" id="nav-organizers" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50">🖼️ Graphic Organizers</button>
+                    <button onclick="switchView('create')" id="nav-create" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all bg-slate-900 text-white shadow-sm">Create Story</button>
+                    <button onclick="switchView('organizers')" id="nav-organizers" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50">Graphic Organizers</button>
                     
-                    <!-- Subfolder 1: Sentence Frames Accordion Core Container -->
+                    <!-- Sentence Frames Navigation Header -->
                     <div class="space-y-0.5">
-                        <button onclick="toggleSubnav('subnav-frames')" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
-                            <span>💬 Sentence Frames</span>
-                            <span id="arrow-subnav-frames" class="text-[10px] text-slate-400">▶</span>
+                        <button onclick="toggleSubnav('subnav-frames')" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
+                            <span>Sentence Frames</span>
+                            <span id="arrow-subnav-frames" class="text-[9px] text-slate-400">▶</span>
                         </button>
                         <div id="subnav-frames" class="subnav-menu pl-4 space-y-0.5">
-                            <button onclick="switchView('frames-who')" id="nav-frames-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">👤 Who Set</button>
-                            <button onclick="switchView('frames-where')" id="nav-frames-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">📍 Where Set</button>
-                            <button onclick="switchView('frames-what')" id="nav-frames-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">🏁 What Set</button>
-                            <button onclick="switchView('frames-why')" id="nav-frames-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💡 Why Set</button>
-                            <button onclick="switchView('frames-reflection')" id="nav-frames-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💭 Reflection Set</button>
+                            <button onclick="switchView('frames-who')" id="nav-frames-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Who Starters</button>
+                            <button onclick="switchView('frames-where')" id="nav-frames-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Where Starters</button>
+                            <button onclick="switchView('frames-what')" id="nav-frames-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">What Starters</button>
+                            <button onclick="switchView('frames-why')" id="nav-frames-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Why Starters</button>
+                            <button onclick="switchView('frames-reflection')" id="nav-frames-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Reflection Starters</button>
                         </div>
                     </div>
 
-                    <!-- Subfolder 2: Word Banks Accordion Core Container -->
+                    <!-- Word Banks Navigation Header -->
                     <div class="space-y-0.5">
-                        <button onclick="toggleSubnav('subnav-wordbanks')" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
-                            <span>🎯 Word Banks</span>
-                            <span id="arrow-subnav-wordbanks" class="text-[10px] text-slate-400">▶</span>
+                        <button onclick="toggleSubnav('subnav-wordbanks')" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
+                            <span>Word Banks</span>
+                            <span id="arrow-subnav-wordbanks" class="text-[9px] text-slate-400">▶</span>
                         </button>
                         <div id="subnav-wordbanks" class="subnav-menu pl-4 space-y-0.5">
-                            <button onclick="switchView('wordbanks-who')" id="nav-wordbanks-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">👤 Who Words</button>
-                            <button onclick="switchView('wordbanks-where')" id="nav-wordbanks-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">📍 Where Words</button>
-                            <button onclick="switchView('wordbanks-what')" id="nav-wordbanks-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">🏁 What Words</button>
-                            <button onclick="switchView('wordbanks-why')" id="nav-wordbanks-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💡 Why Words</button>
-                            <button onclick="switchView('wordbanks-reflection')" id="nav-wordbanks-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-50">💭 Reflection Words</button>
+                            <button onclick="switchView('wordbanks-who')" id="nav-wordbanks-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Who Vocabulary</button>
+                            <button onclick="switchView('wordbanks-where')" id="nav-wordbanks-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Where Vocabulary</button>
+                            <button onclick="switchView('wordbanks-what')" id="nav-wordbanks-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">What Vocabulary</button>
+                            <button onclick="switchView('wordbanks-why')" id="nav-wordbanks-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Why Vocabulary</button>
+                            <button onclick="switchView('wordbanks-reflection')" id="nav-wordbanks-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Reflection Vocabulary</button>
                         </div>
                     </div>
 
-                    <button onclick="switchView('stories')" id="nav-stories" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-50">📜 My Saved Stories</button>
+                    <button onclick="switchView('stories')" id="nav-stories" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50">Saved Stories</button>
                 </nav>
             </div>
-            <div class="pt-4 border-t">
-                <button onclick="switchView('settings')" id="nav-settings" class="w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all text-slate-500 hover:bg-slate-100 flex items-center gap-2">⚙️ Settings</button>
+            <div class="pt-4 border-t border-slate-100">
+                <button onclick="switchView('settings')" id="nav-settings" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-500 hover:bg-slate-50 flex items-center gap-2">Settings</button>
             </div>
         </aside>
 
-        <!-- Main Display Content Workspace Box Container -->
-        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+        <!-- Primary Main Workspace Frame -->
+        <main class="flex-1 p-5 md:p-8 overflow-y-auto">
             
-            <!-- VIEW 1: CREATE HUB PAGE VIEW -->
+            <!-- SECTION 1: CREATE MAIN WORKING VIEW -->
             <section id="view-create" class="view-panel space-y-6">
-                <div class="border-b pb-3">
-                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Workspace Editor</h2>
-                    <p class="text-sm text-slate-500">Construct sentences step-by-step using structural accordion nodes below.</p>
+                <div class="border-b border-slate-200 pb-3">
+                    <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">Workspace Editor</h2>
+                    <p class="text-sm text-slate-500">Construct narratives step-by-step using structural accordion layers.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 space-y-4 no-print">
                         <div id="vertical-accordion" class="space-y-3"></div>
+                        <div class="pt-2">
+                            <button onclick="compileActiveParagraph()" class="w-full py-3 bg-slate-900 text-white font-medium rounded-xl shadow-sm hover:bg-slate-800 transition-all text-sm">
+                                Show My Paragraph View
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Right Column Sheet Node -->
+                    <!-- Right Composite Output View Card -->
                     <div class="lg:col-span-1">
-                        <div id="compiled-paragraph-card" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-dashed border-sky-200 min-h-[450px] flex flex-col justify-between">
+                        <div id="compiled-paragraph-card" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[460px] flex flex-col justify-between">
                             <div class="space-y-4">
-                                <div class="flex justify-between items-center border-b pb-2">
-                                    <h3 class="text-xl font-bold text-sky-600">📝 Live Workspace</h3>
-                                    <button onclick="speakActiveText()" class="no-print px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all">🔊 Speak</button>
+                                <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                                    <h3 class="text-md font-semibold text-slate-900">Live Transcript Sheet</h3>
+                                    <button onclick="speakActiveText()" class="no-print px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-medium rounded-lg border border-slate-200">Speak</button>
                                 </div>
-                                <div id="live-text-composite" class="space-y-2 text-lg leading-relaxed text-slate-400 italic">
-                                    Make selections from the vertical accordion blocks to generate sentence structures...
+                                <div id="live-text-composite" class="space-y-2 text-base leading-relaxed text-slate-400 italic">
+                                    Select targets from the workspace blocks to populate your custom paragraph summary manifest data...
                                 </div>
                             </div>
-                            <div class="mt-6 pt-4 border-t space-y-2 no-print">
-                                <input type="text" id="active-story-title" placeholder="Enter custom title name..." class="w-full px-3 py-2 border rounded-xl text-sm font-semibold bg-slate-50" />
-                                <button onclick="saveActiveStory()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm shadow-sm transition-all">Archive into Portfolio Log</button>
-                                <button onclick="window.print()" class="w-full py-1.5 bg-slate-100 text-slate-500 text-xs font-bold rounded-lg">🖨️ Print Document</button>
+                            <div class="mt-6 pt-4 border-t border-slate-100 space-y-2 no-print">
+                                <input type="text" id="active-story-title" placeholder="Assign custom record name..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-medium bg-slate-50" />
+                                <button onclick="saveActiveStory()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl text-xs shadow-sm transition-all">Archive Document Profile</button>
+                                <button onclick="window.print()" class="w-full py-1.5 bg-slate-100 text-slate-600 text-xs font-medium rounded-lg">Print Document</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- VIEW 2: GRAPHIC ORGANIZERS SHEET -->
+            <!-- SECTION 2: GRAPHIC ORGANIZERS SHEET -->
             <section id="view-organizers" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">Graphic Organizers Manager</h2>
-                    <p class="text-sm text-slate-500">Bind custom picture matrices to direct token strings for unified button choice rendering.</p>
+                    <h2 class="text-2xl font-semibold tracking-tight text-slate-900">Graphic Organizers Library</h2>
+                    <p class="text-sm text-slate-500">Bind localized image maps to direct token strings for clean button selections.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-4">
-                    <h3 class="text-md font-bold text-slate-700 uppercase tracking-wider">➕ Register New Custom Entity Card</h3>
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl border border-slate-200 space-y-4">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Add New Prompt Asset Card</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1">Target Dimension Slot</label>
-                            <select id="go-input-type" class="w-full px-3 py-1.5 border rounded-xl text-xs font-semibold bg-slate-50">
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Structural Category Target</label>
+                            <select id="go-input-type" class="w-full px-3 py-1.5 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium">
                                 <option value="who">Character / Person (Who)</option>
                                 <option value="where">Location / Setting (Where)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1">Asset Target Label Text</label>
-                            <input type="text" id="go-input-name" placeholder="e.g., Captain Hook, The Forest" class="w-full px-3 py-1.5 border rounded-xl text-xs bg-slate-50" />
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Asset Identity Text</label>
+                            <input type="text" id="go-input-name" placeholder="e.g., Doctor, Playground" class="w-full px-3 py-1.5 border border-slate-200 rounded-xl text-xs bg-slate-50" />
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Upload Visual Prompt Picture</label>
-                        <input type="file" id="go-input-file" accept="image/*" class="w-full text-xs text-slate-500" />
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Upload Visual Prompt Graphic</label>
+                        <input type="file" id="go-input-file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1 file:px-3 file:rounded-xl file:border file:border-slate-200 file:bg-slate-50 file:text-xs file:font-medium" />
                     </div>
-                    <button onclick="addGraphicOrganizerAsset()" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-xs">Save Card Matrix</button>
+                    <button onclick="addGraphicOrganizerAsset()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl text-xs shadow-sm">Save Asset Card</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-amber-600 text-sm">👤 Uploaded Characters (Who)</h4><div id="go-list-who" class="grid grid-cols-2 gap-2"></div></div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-blue-600 text-sm">📍 Uploaded Places (Where)</h4><div id="go-list-where" class="grid grid-cols-2 gap-2"></div></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200"><h4 class="font-semibold border-b pb-1.5 mb-3 text-slate-900 text-xs uppercase tracking-wider">Characters (Who)</h4><div id="go-list-who" class="grid grid-cols-2 gap-2"></div></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200"><h4 class="font-semibold border-b pb-1.5 mb-3 text-slate-900 text-xs uppercase tracking-wider">Places (Where)</h4><div id="go-list-where" class="grid grid-cols-2 gap-2"></div></div>
                 </div>
             </section>
 
-            <!-- VIEWS 3-7: SENTENCE FRAMES SUB-PAGES ENGINE -->
+            <!-- SECTION 3: RE-ENGINEERED SENTENCE FRAMES STUDIO SUB-PANEL -->
             <section id="view-frames-container" class="view-panel hidden space-y-6">
-                <div>
-                    <h2 id="frames-page-title" class="text-3xl font-bold tracking-tight text-slate-800">Sentence Frames Hub</h2>
-                    <p class="text-sm text-slate-500">Create multiple independent labeled frame groups for varying educational tracks.</p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-3">
-                    <h3 class="text-sm font-bold text-slate-700 uppercase">📁 Create New Labeled Sentence Frame Set</h3>
-                    <div class="flex gap-2">
-                        <input type="text" id="new-frameset-label" placeholder="e.g., Book Report Starters, Daily Tracker" class="flex-1 px-3 py-2 border rounded-xl text-xs font-semibold bg-slate-50 shadow-inner" />
-                        <button onclick="createNewSentenceFrameCollection()" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all shadow-sm">Create Empty Set</button>
+                <div class="flex justify-between items-start border-b border-slate-200 pb-3">
+                    <div>
+                        <h2 id="frames-page-title" class="text-2xl font-semibold tracking-tight text-slate-900">Sentence Frames</h2>
+                        <p class="text-sm text-slate-500">Configure labeled collections. Click directly into entries to modify values instantly.</p>
                     </div>
                 </div>
-                <div id="frames-collections-wrapper" class="space-y-4"></div>
+
+                <!-- Unified Favorites Module Hook Header -->
+                <div class="bg-white p-4 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50/40 to-indigo-50/20 space-y-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-blue-800 flex items-center gap-1.5">Starred Core Favorites</h3>
+                    <div id="frames-favorites-bucket" class="flex flex-wrap gap-2 text-xs"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 max-w-xl space-y-3">
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Instantiate New Sentence Frame Collection</h3>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-frameset-label" placeholder="e.g., Literature Log Frames, Morning Checkin" class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium" />
+                        <button onclick="createNewSentenceFrameCollection()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded-xl shadow-sm">Create Folder</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Saved Sentence Frame Folders</h3>
+                    <div id="frames-collections-wrapper" class="space-y-3"></div>
+                </div>
             </section>
 
-            <!-- VIEWS 8-12: WORD BANKS SUB-PAGES ENGINE -->
+            <!-- SECTION 4: RE-ENGINEERED INLINE WORD BANKS STUDIO SUB-PANEL -->
             <section id="view-wordbanks-container" class="view-panel hidden space-y-6">
-                <div>
-                    <h2 id="wordbanks-page-title" class="text-3xl font-bold tracking-tight text-slate-800">Word Banks Studio</h2>
-                    <p class="text-sm text-slate-500">Manage multiple compartmentalized word collections featuring user-selected color codings.</p>
+                <div class="border-b border-slate-200 pb-3">
+                    <h2 id="wordbanks-page-title" class="text-2xl font-semibold tracking-tight text-slate-900">Word Banks Studio</h2>
+                    <p class="text-sm text-slate-500">Manage multiple structured sets. Click items directly to edit spelling layouts immediately.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-3">
-                    <h3 class="text-sm font-bold text-slate-700 uppercase">📁 Create New Labeled Word Bank Set</h3>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 max-w-xl space-y-3">
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Instantiate New Named Word Bank Set</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <input type="text" id="new-wordbank-label" placeholder="e.g., Family Members, Emotions" class="sm:col-span-2 px-3 py-2 border rounded-xl text-xs font-semibold bg-slate-50 shadow-inner" />
+                        <input type="text" id="new-wordbank-label" placeholder="e.g., Core Adjectives, Action Verbs" class="sm:col-span-2 px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium" />
                         <div class="flex items-center gap-2">
-                            <label class="text-[10px] uppercase font-bold text-slate-400">Color:</label>
-                            <input type="color" id="new-wordbank-color" value="#3b82f6" class="w-full h-8 rounded border cursor-pointer bg-transparent" />
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">Accent Color</label>
+                            <input type="color" id="new-wordbank-color" value="#4f46e5" class="w-full h-8 border rounded-lg cursor-pointer bg-transparent" />
                         </div>
                     </div>
-                    <button onclick="createNewWordBankCollection()" class="w-full py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl shadow-sm transition-all">Instantiate Named Word Bank</button>
+                    <button onclick="createNewWordBankCollection()" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded-xl shadow-sm">Save New Sub-Bank</button>
                 </div>
-                <div id="wordbanks-collections-wrapper" class="space-y-4"></div>
+
+                <div>
+                    <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Saved Word Banks</h3>
+                    <div id="wordbanks-collections-wrapper" class="space-y-3"></div>
+                </div>
             </section>
 
-            <!-- VIEW 13: MY STORIES DIRECT TIMELINE LIST -->
+            <!-- SECTION 5: STORIES ARCHIVE PORTFOLIO LOG -->
             <section id="view-stories" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">Saved Stories Archive</h2>
-                    <p class="text-sm text-slate-500">Review compiled tracking reports stored locally on this machine interface device.</p>
+                    <h2 class="text-2xl font-semibold tracking-tight text-slate-900">Saved Stories Archive</h2>
+                    <p class="text-sm text-slate-500">Review portfolio items cached on this system's data partitions.</p>
                 </div>
                 <div id="saved-stories-container" class="space-y-4"></div>
             </section>
 
-            <!-- VIEW 14: MULTI-ACCESS MODAL SYSTEM SETTINGS SECTION -->
+            <!-- SECTION 6: THEMES AND VOICES ADJUSTMENT PANEL -->
             <section id="view-settings" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">System Preferences Hub</h2>
-                    <p class="text-sm text-slate-500">Configure visual themes, structural weights, and perform native voice synthesize tests.</p>
+                    <h2 class="text-2xl font-semibold tracking-tight text-slate-900">System Preferences</h2>
+                    <p class="text-sm text-slate-500">Modify typography properties, palette interfaces, and sound outputs.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-5">
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl border border-slate-200 space-y-5">
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Visual UI Themes Profile Canvas</label>
-                        <select id="settings-theme" onchange="applySystemTheme(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-xs font-semibold">
-                            <option value="sky">Classic Sky Blue Profile Canvas</option>
-                            <option value="slate">Dusk Slate High-Fidelity Charcoal</option>
-                            <option value="lavender">Calm Amethyst Lavender Field</option>
-                            <option value="mint">Fresh Emerald Botanical Mint</option>
-                            <option value="sunflower">High Contrast Warm Amber Sunflower</option>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Visual UI Themes Profile Canvas</label>
+                        <select id="settings-theme" onchange="applySystemTheme(this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-medium">
+                            <option value="sky">Classic Sky Blue Canvas Profile</option>
+                            <option value="slate">Minimalist Crisp Corporate Slate</option>
+                            <option value="lavender">Calm Clinical Amethyst Lavender</option>
+                            <option value="mint">Fresh Sage Botanical Mint</option>
+                            <option value="sunflower">High Contrast Technical Sunflower Amber</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Accessibility Typography Metrics Configuration</label>
-                        <select id="settings-font" onchange="applySystemFont(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-xs font-semibold">
-                            <option value="font-fredoka">Fredoka Balanced Proportional Rounded</option>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Accessibility Typography Core Metrics</label>
+                        <select id="settings-font" onchange="applySystemFont(this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-medium">
                             <option value="font-inter">Inter Technical Linear Geometric Sans</option>
+                            <option value="font-fredoka">Fredoka Balanced Proportional Rounded</option>
                             <option value="font-comic">Comic Neue Friendly High Legibility</option>
-                            <option value="font-lexend">Lexend Specialized Reading Comprehension Sans</option>
+                            <option value="font-lexend">Lexend Specialized Literacy Assessment Face</option>
                         </select>
                     </div>
-                    <div class="border-t pt-4 space-y-2">
-                        <label class="block text-sm font-bold text-slate-700">Audio Speech Synthesizer Voice Select Engine</label>
+                    <div class="border-t border-slate-100 pt-4 space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Audio Speech Synthesizer Voice Output Engine</label>
                         <div class="flex gap-2">
-                            <select id="settings-voice" class="flex-1 px-3 py-2 border rounded-xl bg-slate-50 text-xs font-semibold"></select>
-                            <button onclick="executeVocalProfileAudioTest()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm">Test Voice 🔊</button>
+                            <select id="settings-voice" class="flex-1 px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-medium"></select>
+                            <button onclick="executeVocalProfileAudioTest()" class="px-4 py-2 bg-slate-900 text-white text-xs font-medium rounded-xl shadow-sm hover:bg-slate-800 transition-all">Test Voice</button>
                         </div>
                     </div>
                 </div>
@@ -229,61 +252,54 @@
         </main>
     </div>
 
-    <!-- Core Database Application Router Manifest Engine Logic -->
+    <!-- Application Engine Execution Code Logic Routing Block -->
     <script>
         const activeChannels = ["who", "where", "what", "why", "reflection"];
         let activeRouteChannelTarget = null; 
         let openWorkspaceAccordion = null; 
-        let openConfigAccordions = {}; 
+        
+        // Tracks expansion states of config collections. Folders collapse by default unless targeted.
+        let collapsedConfigFolders = {}; 
 
-        // Refined Schema Architecture Database Base Config File Layout Template
         const defaultAppStructureDatabasePayload = {
             sentence_frames: {
-                who: [{ id: 'sf-who-1', label: 'Daily School Routine', items: ["Today, I interacted with", "Our class group included"] }],
-                where: [{ id: 'sf-where-1', label: 'Daily School Routine', items: ["We completed tasks at the", "I executed work inside the"] }],
-                what: [{ id: 'sf-what-1', label: 'Daily School Routine', items: ["The main assignment done was", "I spent time processing"] }],
-                why: [{ id: 'sf-why-1', label: 'Daily School Routine', items: ["This was necessary because", "I did this task to build"] }],
-                reflection: [{ id: 'sf-refl-1', label: 'Daily School Routine', items: ["My view of it was that it felt", "Looking back, I thought it was"] }]
+                who: [{ id: 'sf-who-default', label: 'General Starters', items: [{ text: "Today, I spent time with", starred: true }, { text: "Our main team group included", starred: false }] }],
+                where: [{ id: 'sf-where-default', label: 'General Starters', items: [{ text: "We completed tasks at the", starred: false }, { text: "I executed work inside the", starred: false }] }],
+                what: [{ id: 'sf-what-default', label: 'General Starters', items: [{ text: "The main assignment done was", starred: false }, { text: "I spent time processing", starred: false }] }],
+                why: [{ id: 'sf-why-default', label: 'General Starters', items: [{ text: "This was necessary because", starred: false }, { text: "I did this task to build", starred: false }] }],
+                reflection: [{ id: 'sf-refl-default', label: 'General Starters', items: [{ text: "My view of it was that it felt", starred: false }, { text: "Looking back, I thought it was", starred: false }] }]
             },
             word_banks: {
-                who: [{ id: 'wb-who-1', label: 'Family Members', color: '#d97706', items: ["Mom and Dad", "my brother and sister", "grandparents"] }],
-                where: [{ id: 'wb-where-1', label: 'Campus Locations', color: '#2563eb', items: ["the school playground", "the library media lab", "the cafeteria lunch room"] }],
-                what: [{ id: 'wb-what-1', label: 'Core Activities', color: '#059669', items: ["painting a canvas picture", "reading an adventure chapter", "practicing math operations"] }],
-                why: [{ id: 'wb-why-1', label: 'IEP Objective Targets', color: '#db2777', items: ["it helps grow my independence", "we wanted to learn new facts", "it was part of my schedule"] }],
-                reflection: [{ id: 'wb-refl-1', label: 'Emotional State Checks', color: '#7c3aed', items: ["super awesome and fun!", "calm and focused", "a little bit hard for me"] }]
+                who: [{ id: 'wb-who-default', label: 'Family Members', color: '#475569', items: ["Mom and Dad", "Classmates", "Instructional Teacher"] }],
+                where: [{ id: 'wb-where-default', label: 'Campus Locations', color: '#2563eb', items: ["The Playground", "Media Lab Library", "Cafeteria"] }],
+                what: [{ id: 'wb-what-default', label: 'Core Activities', color: '#059669', items: ["Painting a Canvas", "Reading a Chapter", "Practicing Math"] }],
+                why: [{ id: 'wb-why-default', label: 'IEP Objective Targets', color: '#db2777', items: ["Growing Independence", "Learning New Facts", "Schedule Routines"] }],
+                reflection: [{ id: 'wb-refl-default', label: 'Evaluations', color: '#7c3aed', items: ["Successful and Fun", "Calm and Focused", "Demanding Extra Effort"] }]
             },
             organizers: [],
             stories: [],
             active_selections: { who: { frame:'', word:'' }, where: { frame:'', word:'' }, what: { frame:'', word:'' }, why: { frame:'', word:'' }, reflection: { frame:'', word:'' } },
-            active_config_pointers: { who: { frameId:'sf-who-1', bankId:'wb-who-1' }, where: { frameId:'sf-where-1', bankId:'wb-where-1' }, what: { frameId:'sf-what-1', bankId:'wb-what-1' }, why: { frameId:'sf-why-1', bankId:'wb-why-1' }, reflection: { frameId:'sf-refl-1', bankId:'wb-refl-1' } },
-            preferences: { theme: 'sky', font: 'font-fredoka', voiceURI: '' }
+            active_config_pointers: { who: { frameId:'sf-who-default', bankId:'wb-who-default' }, where: { frameId:'sf-where-default', bankId:'wb-where-default' }, what: { frameId:'sf-what-default', bankId:'wb-what-default' }, why: { frameId:'sf-why-default', bankId:'wb-why-default' }, reflection: { frameId:'sf-refl-default', bankId:'wb-refl-default' } },
+            preferences: { theme: 'slate', font: 'font-inter', voiceURI: '' }
         };
 
-        let DB = JSON.parse(localStorage.getItem('msb_v3_platform_database')) || defaultAppStructureDatabasePayload;
-        
-        // Data Migration Protection Code Layer Block for Legacy Cache Layout Upgrades
-        if(!DB.active_config_pointers) { DB = defaultAppStructureDatabasePayload; localStorage.setItem('msb_v3_platform_database', JSON.stringify(DB)); }
+        let DB = JSON.parse(localStorage.getItem('msb_v4_professional_db')) || defaultAppStructureDatabasePayload;
 
         function commitLocalStorage() {
-            localStorage.setItem('msb_v3_platform_database', JSON.stringify(DB));
+            localStorage.setItem('msb_v4_professional_db', JSON.stringify(DB));
         }
 
-        // Expanded SPA Routing Manifest Engine Dispatches
         function switchView(target) {
             document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
-            
-            // Clean active horizontal selections
             document.querySelectorAll('#sidebar-nav nav button, #sidebar-nav pl-4 button').forEach(b => {
-                b.classList.remove('bg-sky-500', 'bg-indigo-600', 'text-white', 'shadow-sm');
-                b.classList.add('text-slate-600');
+                b.className = "w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50";
             });
 
-            // Parse sub-route parameters
             if(target.startsWith('frames-')) {
                 activeRouteChannelTarget = target.split('-')[1];
                 document.getElementById('view-frames-container').classList.remove('hidden');
                 document.getElementById('frames-page-title').innerText = `Sentence Frames: ${activeRouteChannelTarget.toUpperCase()}`;
-                document.getElementById(`nav-frames-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-200 text-slate-800";
+                document.getElementById(`nav-frames-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-900";
                 renderFramesSubCollectionsCanvas();
                 return;
             }
@@ -291,7 +307,7 @@
                 activeRouteChannelTarget = target.split('-')[1];
                 document.getElementById('view-wordbanks-container').classList.remove('hidden');
                 document.getElementById('wordbanks-page-title').innerText = `Word Banks: ${activeRouteChannelTarget.toUpperCase()}`;
-                document.getElementById(`nav-wordbanks-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-200 text-slate-800";
+                document.getElementById(`nav-wordbanks-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-900";
                 renderWordBanksSubCollectionsCanvas();
                 return;
             }
@@ -299,7 +315,7 @@
             document.getElementById(`view-${target}`).classList.remove('hidden');
             const navBtn = document.getElementById(`nav-${target}`);
             if(navBtn && target !== 'settings') {
-                navBtn.className = `w-full text-left px-3 py-2 rounded-xl font-bold text-sm transition-all ${DB.preferences.theme === 'slate' ? 'bg-indigo-600' : 'bg-sky-500'} text-white shadow-sm`;
+                navBtn.className = "w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all bg-slate-900 text-white shadow-sm";
             }
 
             if(target === 'create') renderWorkspaceAccordionCanvas();
@@ -311,78 +327,70 @@
         function toggleSubnav(id) {
             const el = document.getElementById(id);
             const arrow = document.getElementById(`arrow-${id}`);
-            const isOpen = el.classList.contains('open');
-            if(isOpen) { el.classList.remove('open'); arrow.innerText = '▶'; } else { el.classList.add('open'); arrow.innerText = '▼'; }
+            if(el.classList.contains('open')) { el.classList.remove('open'); arrow.innerText = '▶'; } else { el.classList.add('open'); arrow.innerText = '▼'; }
         }
 
-        // ========================================================
-        // COMPONENT 1: CREATE VIEW ARCHITECTURE ACCORDION ENGINE
-        // ========================================================
+        // ==========================================
+        // MODULE 1: ACCORDION DESIGN EDITOR CANVAS
+        // ==========================================
         function renderWorkspaceAccordionCanvas() {
             const wrapper = document.getElementById('vertical-accordion');
             wrapper.innerHTML = activeChannels.map(ch => {
                 const isOpen = openWorkspaceAccordion === ch;
                 const active = DB.active_selections[ch];
-                
-                // Fetch dynamic collections
                 const frameCollections = DB.sentence_frames[ch] || [];
                 const bankCollections = DB.word_banks[ch] || [];
                 
                 const ptr = DB.active_config_pointers[ch];
                 const activeFrameSet = frameCollections.find(f => f.id === ptr.frameId) || frameCollections[0] || { items: [] };
-                const activeBankSet = bankCollections.find(b => b.id === ptr.bankId) || bankCollections[0] || { items: [], color: '#64748b' };
+                const activeBankSet = bankCollections.find(b => b.id === ptr.bankId) || bankCollections[0] || { items: [], color: '#475569' };
 
-                const labelSummary = (active.frame || active.word) ? `"${active.frame} ... ${active.word}"` : 'No active selection recorded...';
+                const labelSummary = (active.frame || active.word) ? `"${active.frame} ... ${active.word}"` : 'Unselected slot...';
 
                 return `
                     <div class="bg-white border rounded-2xl shadow-sm overflow-hidden border-slate-200">
-                        <button onclick="toggleWorkspaceAccordionTab('${ch}')" class="w-full px-5 py-4 text-left flex justify-between items-center bg-slate-50/80 border-b hover:bg-slate-100 transition-all">
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                                <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded text-white text-center" style="background-color: ${activeBankSet.color || '#64748b'}">${ch}</span>
-                                <span class="text-xs text-slate-400 font-semibold truncate max-w-md">${labelSummary}</span>
+                        <button onclick="toggleWorkspaceAccordionTab('${ch}')" class="w-full px-5 py-3 text-left flex justify-between items-center bg-slate-50/70 border-b hover:bg-slate-100 transition-all">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded text-white text-center" style="background-color: ${activeBankSet.color || '#475569'}">${ch}</span>
+                                <span class="text-xs text-slate-400 font-medium truncate max-w-md">${labelSummary}</span>
                             </div>
                             <span class="text-xs text-slate-400">${isOpen ? '▼' : '▶'}</span>
                         </button>
                         <div class="accordion-content ${isOpen ? 'open' : ''} space-y-4">
                             
-                            <!-- Dynamic Internal Dropdown Selectors Row -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                                 <div>
-                                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Target Sentence Frame Folder Collection</label>
-                                    <select onchange="changeActiveWorkspacePointer('${ch}', 'frameId', this.value)" class="w-full px-2 py-1 bg-white border rounded-lg text-xs font-semibold text-slate-700">
+                                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-0.5">Frame Track Folder</label>
+                                    <select onchange="changeActiveWorkspacePointer('${ch}', 'frameId', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700">
                                         ${frameCollections.map(fs => `<option value="${fs.id}" ${ptr.frameId === fs.id ? 'selected' : ''}>${fs.label}</option>`).join('')}
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Target Word Bank Sub-Collection</label>
-                                    <select onchange="changeActiveWorkspacePointer('${ch}', 'bankId', this.value)" class="w-full px-2 py-1 bg-white border rounded-lg text-xs font-semibold text-slate-700">
+                                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-0.5">Word Bank Target</label>
+                                    <select onchange="changeActiveWorkspacePointer('${ch}', 'bankId', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700">
                                         ${bankCollections.map(wb => `<option value="${wb.id}" ${ptr.bankId === wb.id ? 'selected' : ''}>${wb.label}</option>`).join('')}
                                     </select>
                                 </div>
                             </div>
 
-                            <!-- Sentence Frame Selection Rendering Buttons Box -->
                             <div>
-                                <h4 class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">1. Select Custom Sentence Frame Starter:</h4>
+                                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Sentence Starter</h4>
                                 <div class="flex flex-wrap gap-1">
                                     ${activeFrameSet.items ? activeFrameSet.items.map(fr => `
-                                        <button onclick="writeSelectionToken('${ch}', 'frame', '${fr.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all ${active.frame === fr ? 'bg-slate-700 border-slate-700 text-white font-bold' : 'bg-white text-slate-700 hover:border-slate-300'}">${fr}</button>
-                                    `).join('') : `<p class="text-xs italic text-slate-400">Empty frame set items.</p>`}
+                                        <button onclick="writeSelectionToken('${ch}', 'frame', '${fr.text.replace(/'/g, "\\'")}')" class="px-3 py-1.5 border text-xs font-medium rounded-lg transition-all ${active.frame === fr.text ? 'bg-slate-800 border-slate-800 text-white' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}">${fr.text}</button>
+                                    `).join('') : ''}
                                 </div>
                             </div>
 
-                            <!-- Word Bank Button Choice Target Core Grid Layout Block -->
                             <div>
-                                <h4 class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">2. Injected Target Vocabulary Selections:</h4>
+                                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vocabulary Choice</h4>
                                 <div class="flex flex-wrap gap-1">
                                     ${activeBankSet.items ? activeBankSet.items.map(w => `
-                                        <button onclick="writeSelectionToken('${ch}', 'word', '${w.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all" style="${active.word === w ? 'background-color:'+activeBankSet.color+'; border-color:'+activeBankSet.color+'; color:#fff; font-weight:700;' : 'background-color:#fff; color:#334155;'}">${w}</button>
+                                        <button onclick="writeSelectionToken('${ch}', 'word', '${w.replace(/'/g, "\\'")}')" class="px-3 py-1.5 border text-xs font-medium rounded-lg transition-all" style="${active.word === w ? 'background-color:'+activeBankSet.color+'; border-color:'+activeBankSet.color+'; color:#fff;' : 'background-color:#fff; color:#334155; border-color:#e2e8f0;'}">${w}</button>
                                     `).join('') : ''}
-                                    
-                                    <!-- Context Graphic Organizers Integration Check -->
                                     ${(ch === 'who' || ch === 'where') ? DB.organizers.filter(o => o.type === ch).map(org => `
-                                        <button onclick="writeSelectionToken('${ch}', 'word', '${org.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all" style="${active.word === org.name ? 'background-color:'+activeBankSet.color+'; border-color:'+activeBankSet.color+'; color:#fff; font-weight:700;' : 'background-color:#fff; color:#475569;'}">
-                                            ${org.img ? `<img src="${org.img}" class="w-4 h-4 object-cover rounded" />` : '🖼️'} ${org.name}
+                                        <button onclick="writeSelectionToken('${ch}', 'word', '${org.name.replace(/'/g, "\\'")}')" class="px-3 py-1.5 border text-xs font-medium rounded-lg flex items-center gap-1.5 transition-all" style="${active.word === org.name ? 'background-color:'+activeBankSet.color+'; border-color:'+activeBankSet.color+'; color:#fff;' : 'background-color:#fff; color:#475569; border-color:#e2e8f0;'}">
+                                            ${org.img ? `<img src="${org.img}" class="w-3.5 h-3.5 object-cover rounded" />` : ''} ${org.name}
                                         </button>
                                     `).join('') : ''}
                                 </div>
@@ -395,22 +403,9 @@
             updateLiveTextCompositeBlockPanel();
         }
 
-        function toggleWorkspaceAccordionTab(ch) {
-            openWorkspaceAccordion = (openWorkspaceAccordion === ch) ? null : ch;
-            renderWorkspaceAccordionCanvas();
-        }
-
-        function changeActiveWorkspacePointer(ch, parameter, targetId) {
-            DB.active_config_pointers[ch][parameter] = targetId;
-            commitLocalStorage();
-            renderWorkspaceAccordionCanvas();
-        }
-
-        function writeSelectionToken(ch, layer, val) {
-            DB.active_selections[ch][layer] = val;
-            commitLocalStorage();
-            renderWorkspaceAccordionCanvas();
-        }
+        function toggleWorkspaceAccordionTab(ch) { openWorkspaceAccordion = (openWorkspaceAccordion === ch) ? null : ch; renderWorkspaceAccordionCanvas(); }
+        function changeActiveWorkspacePointer(ch, parameter, targetId) { DB.active_config_pointers[ch][parameter] = targetId; commitLocalStorage(); renderWorkspaceAccordionCanvas(); }
+        function writeSelectionToken(ch, layer, val) { DB.active_selections[ch][layer] = val; commitLocalStorage(); renderWorkspaceAccordionCanvas(); }
 
         function updateLiveTextCompositeBlockPanel() {
             const display = document.getElementById('live-text-composite');
@@ -420,95 +415,122 @@
                 const act = DB.active_selections[ch];
                 const bankSet = (DB.word_banks[ch] || []).find(b => b.id === DB.active_config_pointers[ch].bankId) || { color: '#475569' };
                 if(act.frame || act.word) {
-                    fragments.push(`<span>${act.frame}</span> <span style="color: ${bankSet.color}; font-weight:700;">${act.word || '...'}</span>.`);
+                    fragments.push(`<span>${act.frame}</span> <span style="color: ${bankSet.color}; font-weight:600;">${act.word || '...'}</span>.`);
                 }
             });
 
             if(fragments.length === 0) {
-                display.innerHTML = `Make selections from the vertical accordion blocks to generate sentence structures...`;
-                display.className = "space-y-2 text-lg leading-relaxed text-slate-400 italic";
+                display.innerHTML = `Select targets from the workspace blocks to populate your custom paragraph summary manifest data...`;
+                display.className = "space-y-2 text-base leading-relaxed text-slate-400 italic";
             } else {
                 display.innerHTML = fragments.join(" ");
-                display.className = "space-y-2 text-lg leading-relaxed text-slate-800 font-semibold transition-all";
+                display.className = "space-y-2 text-base leading-relaxed text-slate-800 font-medium transition-all";
             }
+        }
+
+        function compileActiveParagraph() {
+            const lines = [];
+            activeChannels.forEach(ch => {
+                const act = DB.active_selections[ch];
+                if(act.frame || act.word) lines.push(`${act.frame} ${act.word || '...'}.`);
+            });
+            if(lines.length === 0) { alert("The active construction workspace contains no entries."); return; }
+            confetti({ particleCount: 100, spread: 50, origin: { y: 0.7 } });
+            alert(`Compiled Paragraph Transcript:\n\n${lines.join(" ")}`);
         }
 
         function saveActiveStory() {
             const titleElement = document.getElementById('active-story-title');
-            const title = titleElement.value.trim() || `Social Record (${new Date().toLocaleDateString()})`;
-            
+            const title = titleElement.value.trim() || `Social Report Summary (${new Date().toLocaleDateString()})`;
             const textLines = [];
             activeChannels.forEach(ch => {
                 const act = DB.active_selections[ch];
                 if(act.frame || act.word) textLines.push(`${act.frame} ${act.word || '...'}.`);
             });
+            if(textLines.length === 0) return;
 
-            if(textLines.length === 0) { alert("The active construction grid sheet is blank."); return; }
-
-            const packageObj = { id: Date.now(), title, content: textLines.join(" "), timestamp: new Date().toLocaleString() };
-            DB.stories.unshift(packageObj);
-            
-            // Clear selections
+            DB.stories.unshift({ id: Date.now(), title, content: textLines.join(" "), timestamp: new Date().toLocaleString() });
             activeChannels.forEach(ch => { DB.active_selections[ch] = { frame:'', word:'' }; });
             titleElement.value = "";
             commitLocalStorage();
-            
-            confetti({ particleCount: 140, spread: 70, origin: { y: 0.6 } });
-            alert("✨ Social story logged into archive timeline successfully!");
             renderWorkspaceAccordionCanvas();
         }
 
         function speakActiveText() {
             const rawText = document.getElementById('live-text-composite').innerText;
-            if(rawText.includes("Make selections")) return;
-            executeAudioVoiceSpeechSynthesis(rawText);
+            if(!rawText.includes("Select targets")) executeAudioVoiceSpeechSynthesis(rawText);
         }
 
         function executeAudioVoiceSpeechSynthesis(txt) {
             if(!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(txt);
-            const voiceURI = DB.preferences.voiceURI;
-            if(voiceURI) {
-                const matchedVoice = window.speechSynthesis.getVoices().find(v => v.voiceURI === voiceURI);
-                if(matchedVoice) utterance.voice = matchedVoice;
+            if(DB.preferences.voiceURI) {
+                const voice = window.speechSynthesis.getVoices().find(v => v.voiceURI === DB.preferences.voiceURI);
+                if(voice) utterance.voice = voice;
             }
-            utterance.rate = 0.85;
+            utterance.rate = 0.88;
             window.speechSynthesis.speak(utterance);
         }
 
-        // ========================================================
-        // COMPONENT 2: SENTENCE FRAMES MODULAR SUB-PAGES ENGINE
-        // ========================================================
+        // ==========================================
+        // MODULE 2: SENTENCE FRAMES STUDIO ENGINE
+        // ==========================================
         function renderFramesSubCollectionsCanvas() {
             const wrapper = document.getElementById('frames-collections-wrapper');
             const collections = DB.sentence_frames[activeRouteChannelTarget] || [];
+            
+            // Build Core Starred Favorites View Component
+            const favoritesBucket = document.getElementById('frames-favorites-bucket');
+            const starredItems = [];
+            collections.forEach(folder => {
+                folder.items.forEach((item, idx) => {
+                    if(item.starred) starredItems.push({ folderId: folder.id, index: idx, text: item.text });
+                });
+            });
 
+            if(starredItems.length === 0) {
+                favoritesBucket.innerHTML = `<span class="text-slate-400 italic text-xs font-normal">No sentence structures starred inside this workspace tier module.</span>`;
+            } else {
+                favoritesBucket.innerHTML = starredItems.map(fav => `
+                    <div class="px-2.5 py-1 bg-white border border-blue-200 rounded-lg shadow-sm flex items-center gap-2">
+                        <span class="font-medium text-slate-700">${fav.text}</span>
+                        <button onclick="toggleFrameStarState('${fav.folderId}', ${fav.index})" class="text-amber-500 hover:text-slate-300 text-xs">★</button>
+                    </div>
+                `).join('');
+            }
+
+            // Build Main Saved Folders List View
             wrapper.innerHTML = collections.map(set => {
-                const isExpanded = openConfigAccordions[set.id] !== false; 
+                const isCollapsed = collapsedConfigFolders[set.id] === true;
                 return `
-                    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                        <div class="px-5 py-3 bg-slate-50 flex justify-between items-center border-b">
-                            <button onclick="toggleConfigAccordion('${set.id}')" class="font-bold text-slate-700 text-sm hover:text-sky-600 flex items-center gap-2">
-                                📁 ${set.label} <span class="text-xs text-slate-400 font-normal">(${set.items.length} frames)</span>
-                            </button>
-                            <button onclick="deleteSentenceFrameCollection('${set.id}')" class="text-xs font-semibold text-red-400 hover:text-red-600">Delete Entire Folder</button>
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                            <span class="font-semibold text-slate-700 text-xs uppercase tracking-wider">${set.label}</span>
+                            <div class="flex items-center gap-3 text-xs no-print">
+                                <button onclick="toggleConfigFolderCollapse('${set.id}')" class="text-blue-600 hover:text-blue-800 font-medium">${isCollapsed ? 'Expand Configuration' : 'Collapse and Save Set'}</button>
+                                <button onclick="deleteSentenceFrameCollection('${set.id}')" class="text-red-400 hover:text-red-600">Delete Entire Folder</button>
+                            </div>
                         </div>
-                        <div class="p-4 space-y-3 ${isExpanded ? '' : 'hidden'}">
+                        <div class="p-4 space-y-2 ${isCollapsed ? 'hidden' : ''}">
                             <div class="space-y-1.5">
                                 ${set.items.map((item, idx) => `
-                                    <div class="flex items-center justify-between bg-slate-50 border p-2 rounded-xl text-xs font-semibold">
-                                        <span class="truncate flex-1 pr-4">${item}</span>
-                                        <div class="flex gap-2 flex-shrink-0">
-                                            <button onclick="editSentenceFrameEntry('${set.id}', ${idx})" class="text-sky-600 hover:text-sky-800">Edit</button>
-                                            <button onclick="deleteSentenceFrameEntry('${set.id}', ${idx})" class="text-red-400 hover:text-red-600">✕</button>
+                                    <div class="flex items-center justify-between bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs font-medium">
+                                        <div class="flex items-center gap-2 flex-1 pr-4">
+                                            <button onclick="toggleFrameStarState('${set.id}', ${idx})" class="text-sm focus:outline-none select-none">${item.starred ? '<span class="text-amber-500">★</span>' : '<span class="text-slate-300 hover:text-amber-400">☆</span>'}</button>
+                                            <span contenteditable="true" onblur="updateInlineFrameText('${set.id}', ${idx}, this.innerText)" class="flex-1 cursor-text bg-transparent block">${item.text}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 flex-shrink-0 text-slate-400 select-none">
+                                            <button onclick="moveFrameIndex('${set.id}', ${idx}, -1)" class="hover:text-slate-700 font-bold px-1">↑</button>
+                                            <button onclick="moveFrameIndex('${set.id}', ${idx}, 1)" class="hover:text-slate-700 font-bold px-1">↓</button>
+                                            <button onclick="deleteSentenceFrameEntry('${set.id}', ${idx})" class="text-red-400 hover:text-red-600 pl-1">✕</button>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
-                            <div class="flex gap-2 pt-2 border-t">
-                                <input type="text" id="input-add-frame-${set.id}" placeholder="Type new frame starter sentence structure..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs bg-slate-50" />
-                                <button onclick="addSentenceFrameItem('${set.id}')" class="px-4 py-1.5 bg-slate-700 text-white font-bold text-xs rounded-xl hover:bg-slate-800">Add Phrase</button>
+                            <div class="flex gap-2 pt-3 border-t border-slate-100">
+                                <input type="text" id="input-add-frame-${set.id}" placeholder="Type new phrase starter..." class="flex-1 px-3 py-1.5 border border-slate-200 rounded-xl text-xs bg-slate-50" />
+                                <button onclick="addSentenceFrameItem('${set.id}')" class="px-4 py-1.5 bg-slate-900 text-white font-medium text-xs rounded-xl shadow-sm">Add Item</button>
                             </div>
                         </div>
                     </div>
@@ -520,19 +542,33 @@
             const input = document.getElementById('new-frameset-label');
             const label = input.value.trim();
             if(!label) return;
-
-            const newCollection = { id: 'sf-' + Date.now(), label, items: [] };
-            DB.sentence_frames[activeRouteChannelTarget].push(newCollection);
+            DB.sentence_frames[activeRouteChannelTarget].push({ id: 'sf-' + Date.now(), label, items: [] });
             commitLocalStorage();
             input.value = "";
             renderFramesSubCollectionsCanvas();
         }
 
-        function toggleConfigAccordion(id) {
-            openConfigAccordions[id] = openConfigAccordions[id] === false;
-            if(document.getElementById('view-frames-container').classList.contains('hidden')) {
-                renderWordBanksSubCollectionsCanvas();
-            } else {
+        function toggleConfigFolderCollapse(id) { collapsedConfigFolders[id] = !collapsedConfigFolders[id]; renderFramesSubCollectionsCanvas(); renderWordBanksSubCollectionsCanvas(); }
+        
+        function updateInlineFrameText(setId, idx, text) {
+            const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
+            if(targetSet && targetSet.items[idx]) { targetSet.items[idx].text = text.trim(); commitLocalStorage(); }
+        }
+
+        function toggleFrameStarState(setId, idx) {
+            const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
+            if(targetSet && targetSet.items[idx]) { targetSet.items[idx].starred = !targetSet.items[idx].starred; commitLocalStorage(); renderFramesSubCollectionsCanvas(); }
+        }
+
+        function moveFrameIndex(setId, idx, delta) {
+            const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
+            if(!targetSet) return;
+            const newIndex = idx + delta;
+            if(newIndex >= 0 && newIndex < targetSet.items.length) {
+                const temp = targetSet.items[idx];
+                targetSet.items[idx] = targetSet.items[newIndex];
+                targetSet.items[newIndex] = temp;
+                commitLocalStorage();
                 renderFramesSubCollectionsCanvas();
             }
         }
@@ -541,23 +577,10 @@
             const input = document.getElementById(`input-add-frame-${setId}`);
             const val = input.value.trim();
             if(!val) return;
-
             const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
-            if(targetSet) { targetSet.items.push(val); commitLocalStorage(); }
+            if(targetSet) { targetSet.items.push({ text: val, starred: false }); commitLocalStorage(); }
             input.value = "";
             renderFramesSubCollectionsCanvas();
-        }
-
-        function editSentenceFrameEntry(setId, idx) {
-            const targetSet = DB.sentence_frames[activeRouteChannelTarget].find(s => s.id === setId);
-            if(!targetSet) return;
-            
-            const updatedText = prompt("Modify sentence frame template string:", targetSet.items[idx]);
-            if(updatedText && updatedText.trim() !== "") {
-                targetSet.items[idx] = updatedText.trim();
-                commitLocalStorage();
-                renderFramesSubCollectionsCanvas();
-            }
         }
 
         function deleteSentenceFrameEntry(setId, idx) {
@@ -567,48 +590,50 @@
         }
 
         function deleteSentenceFrameCollection(setId) {
-            if(confirm("Permanently delete this entire folder asset framework configuration?")) {
+            if(confirm("Permanently wipe this entire structural container module?")) {
                 DB.sentence_frames[activeRouteChannelTarget] = DB.sentence_frames[activeRouteChannelTarget].filter(s => s.id !== setId);
                 commitLocalStorage();
                 renderFramesSubCollectionsCanvas();
             }
         }
 
-        // ========================================================
-        // COMPONENT 3: WORD BANKS MODULAR MULTI-COLLECTION STUDIO
-        // ========================================================
+        // ==========================================
+        // MODULE 3: DIRECT INLINE WORD BANKS CANVAS
+        // ==========================================
         function renderWordBanksSubCollectionsCanvas() {
             const wrapper = document.getElementById('wordbanks-collections-wrapper');
             const collections = DB.word_banks[activeRouteChannelTarget] || [];
 
             wrapper.innerHTML = collections.map(bank => {
-                const isExpanded = openConfigAccordions[bank.id] !== false;
+                const isCollapsed = collapsedConfigFolders[bank.id] === true;
                 return `
-                    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                        <div class="px-5 py-3 bg-slate-50 flex justify-between items-center border-b" style="border-top: 4px solid ${bank.color}">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex justify-between items-center" style="border-top: 3px solid ${bank.color}">
                             <div class="flex items-center gap-3">
-                                <button onclick="toggleConfigAccordion('${bank.id}')" class="font-bold text-slate-700 text-sm hover:text-sky-600 flex items-center gap-2">
-                                    🎯 ${bank.label} <span class="text-xs text-slate-400 font-normal">(${bank.items.length} choices)</span>
-                                </button>
-                                <input type="color" value="${bank.color}" onchange="updateWordBankCollectionColor('${bank.id}', this.value)" class="w-5 h-5 rounded cursor-pointer border" />
+                                <span class="font-semibold text-slate-700 text-xs uppercase tracking-wider">${bank.label}</span>
+                                <input type="color" value="${bank.color}" onchange="updateWordBankCollectionColor('${bank.id}', this.value)" class="w-4 h-4 rounded cursor-pointer border border-slate-200 no-print bg-transparent" />
                             </div>
-                            <button onclick="deleteWordBankCollection('${bank.id}')" class="text-xs font-semibold text-red-400 hover:text-red-600">Delete Entire Bank</button>
+                            <div class="flex items-center gap-3 text-xs no-print">
+                                <button onclick="toggleConfigFolderCollapse('${bank.id}')" class="text-blue-600 hover:text-blue-800 font-medium">${isCollapsed ? 'Expand Content' : 'Collapse and Save Set'}</button>
+                                <button onclick="deleteWordBankCollection('${bank.id}')" class="text-red-400 hover:text-red-600">Delete Entire Bank</button>
+                            </div>
                         </div>
-                        <div class="p-4 space-y-3 ${isExpanded ? '' : 'hidden'}">
+                        <div class="p-4 space-y-2 ${isCollapsed ? 'hidden' : ''}">
                             <div class="space-y-1.5">
                                 ${bank.items.map((item, idx) => `
-                                    <div class="flex items-center justify-between bg-slate-50 border p-2 rounded-xl text-xs font-semibold" style="border-left: 4px solid ${bank.color}">
-                                        <span class="truncate flex-1 pr-4">${item}</span>
-                                        <div class="flex gap-2 flex-shrink-0">
-                                            <button onclick="editWordBankEntry('${bank.id}', ${idx})" class="text-sky-600 hover:text-sky-800">Edit</button>
-                                            <button onclick="deleteWordBankEntry('${bank.id}', ${idx})" class="text-red-400 hover:text-red-600">✕</button>
+                                    <div class="flex items-center justify-between bg-slate-50 border border-slate-200 p-2 rounded-xl text-xs font-medium" style="border-left: 3px solid ${bank.color}">
+                                        <span contenteditable="true" onblur="updateInlineWordText('${bank.id}', ${idx}, this.innerText)" class="flex-1 cursor-text bg-transparent pr-4 block focus:outline-none">${item}</span>
+                                        <div class="flex items-center gap-2 flex-shrink-0 text-slate-400 select-none">
+                                            <button onclick="moveWordIndex('${bank.id}', ${idx}, -1)" class="hover:text-slate-700 font-bold px-1">↑</button>
+                                            <button onclick="moveWordIndex('${bank.id}', ${idx}, 1)" class="hover:text-slate-700 font-bold px-1">↓</button>
+                                            <button onclick="deleteWordBankEntry('${bank.id}', ${idx})" class="text-red-400 hover:text-red-600 pl-1">✕</button>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
-                            <div class="flex gap-2 pt-2 border-t">
-                                <input type="text" id="input-add-word-${bank.id}" placeholder="Type new target token item text..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs bg-slate-50" />
-                                <button onclick="addWordBankItem('${bank.id}')" class="px-4 py-1.5 bg-slate-700 text-white font-bold text-xs rounded-xl hover:bg-slate-800">Add Entry</button>
+                            <div class="flex gap-2 pt-3 border-t border-slate-100">
+                                <input type="text" id="input-add-word-${bank.id}" placeholder="Type new target word..." class="flex-1 px-3 py-1.5 border border-slate-200 rounded-xl text-xs bg-slate-50" />
+                                <button onclick="addWordBankItem('${bank.id}')" class="px-4 py-1.5 bg-slate-900 text-white font-medium text-xs rounded-xl shadow-sm">Add Item</button>
                             </div>
                         </div>
                     </div>
@@ -622,11 +647,15 @@
             const label = labelInp.value.trim();
             if(!label) return;
 
-            const newBank = { id: 'wb-' + Date.now(), label, color: colorInp.value, items: [] };
-            DB.word_banks[activeRouteChannelTarget].push(newBank);
+            DB.word_banks[activeRouteChannelTarget].push({ id: 'wb-' + Date.now(), label, color: colorInp.value, items: [] });
             commitLocalStorage();
             labelInp.value = "";
             renderWordBanksSubCollectionsCanvas();
+        }
+
+        function updateInlineWordText(bankId, idx, text) {
+            const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
+            if(target && target.items[idx] !== undefined) { target.items[idx] = text.trim(); commitLocalStorage(); }
         }
 
         function updateWordBankCollectionColor(bankId, hex) {
@@ -635,27 +664,27 @@
             renderWordBanksSubCollectionsCanvas();
         }
 
+        function moveWordIndex(bankId, idx, delta) {
+            const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
+            if(!target) return;
+            const newIndex = idx + delta;
+            if(newIndex >= 0 && newIndex < target.items.length) {
+                const temp = target.items[idx];
+                target.items[idx] = target.items[newIndex];
+                target.items[newIndex] = temp;
+                commitLocalStorage();
+                renderWordBanksSubCollectionsCanvas();
+            }
+        }
+
         function addWordBankItem(bankId) {
             const input = document.getElementById(`input-add-word-${bankId}`);
             const val = input.value.trim();
             if(!val) return;
-
             const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
             if(target) { target.items.push(val); commitLocalStorage(); }
             input.value = "";
             renderWordBanksSubCollectionsCanvas();
-        }
-
-        function editWordBankEntry(bankId, idx) {
-            const target = DB.word_banks[activeRouteChannelTarget].find(b => b.id === bankId);
-            if(!target) return;
-
-            const updated = prompt("Modify target word bank token identifier text:", target.items[idx]);
-            if(updated && updated.trim() !== "") {
-                target.items[idx] = updated.trim();
-                commitLocalStorage();
-                renderWordBanksSubCollectionsCanvas();
-            }
         }
 
         function deleteWordBankEntry(bankId, idx) {
@@ -665,121 +694,92 @@
         }
 
         function deleteWordBankCollection(bankId) {
-            if(confirm("Permanently wipe this whole named word collection from data registries?")) {
+            if(confirm("Wipe this entire dictionary grid from data cache indices?")) {
                 DB.word_banks[activeRouteChannelTarget] = DB.word_banks[activeRouteChannelTarget].filter(b => b.id !== bankId);
                 commitLocalStorage();
                 renderWordBanksSubCollectionsCanvas();
             }
         }
 
-        // ========================================================
-        // COMPONENT 4: GRAPHIC ORGANIZERS VISUAL ENGINES
-        // ========================================================
+        // ==========================================
+        // MODULE 4: AUXILIARY APPLICATION LIFE CYCLES
+        // ==========================================
         function renderGraphicOrganizersCanvas() {
             const listWho = document.getElementById('go-list-who');
             const listWhere = document.getElementById('go-list-where');
-            
             const whoAssets = DB.organizers.filter(o => o.type === 'who');
             const whereAssets = DB.organizers.filter(o => o.type === 'where');
 
             const makeCard = (obj) => `
-                <div class="p-2 border rounded-xl flex items-center justify-between bg-slate-50 gap-2 overflow-hidden">
+                <div class="p-2 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50 gap-2 overflow-hidden">
                     <div class="flex items-center gap-2 truncate">
-                        ${obj.img ? `<img src="${obj.img}" class="w-8 h-8 object-cover rounded-lg shadow-inner flex-shrink-0" />` : `<div class="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center text-[10px] text-slate-400 font-bold flex-shrink-0">IMG</div>`}
-                        <span class="text-xs font-bold truncate text-slate-700">${obj.name}</span>
+                        ${obj.img ? `<img src="${obj.img}" class="w-8 h-8 object-cover rounded-lg" />` : `<div class="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center text-[10px] text-slate-400 font-medium">IMG</div>`}
+                        <span class="text-xs font-semibold text-slate-700 truncate">${obj.name}</span>
                     </div>
                     <button onclick="deleteOrganizerAssetCard(${obj.id})" class="text-xs text-red-400 hover:text-red-600 px-1">✕</button>
                 </div>
             `;
-
-            listWho.innerHTML = whoAssets.length ? whoAssets.map(makeCard).join('') : `<p class="text-xs italic text-slate-400 p-2">No characters configured.</p>`;
-            listWhere.innerHTML = whereAssets.length ? whereAssets.map(makeCard).join('') : `<p class="text-xs italic text-slate-400 p-2">No settings configured.</p>`;
+            listWho.innerHTML = whoAssets.length ? whoAssets.map(makeCard).join('') : `<p class="text-xs text-slate-400 p-2">Empty canvas.</p>`;
+            listWhere.innerHTML = whereAssets.length ? whereAssets.map(makeCard).join('') : `<p class="text-xs text-slate-400 p-2">Empty canvas.</p>`;
         }
 
         function addGraphicOrganizerAsset() {
             const type = document.getElementById('go-input-type').value;
             const name = document.getElementById('go-input-name').value.trim();
             const fileInput = document.getElementById('go-input-file');
-
             if(!name) return;
-            const file = fileInput.files[0];
 
+            const file = fileInput.files[0];
             if(file) {
                 const reader = new FileReader();
                 reader.onloadend = function() {
                     DB.organizers.push({ id: Date.now(), type, name, img: reader.result });
-                    commitLocalStorage();
-                    resetOrganizerInputFields(fileInput);
+                    commitLocalStorage(); resetOrganizerInputFields(fileInput);
                 };
                 reader.readAsDataURL(file);
             } else {
                 DB.organizers.push({ id: Date.now(), type, name, img: null });
-                commitLocalStorage();
-                resetOrganizerInputFields(fileInput);
+                commitLocalStorage(); resetOrganizerInputFields(fileInput);
             }
         }
 
-        function resetOrganizerInputFields(fileInput) {
-            document.getElementById('go-input-name').value = "";
-            fileInput.value = "";
-            renderGraphicOrganizersCanvas();
-        }
+        function resetOrganizerInputFields(fileInput) { document.getElementById('go-input-name').value = ""; fileInput.value = ""; renderGraphicOrganizersCanvas(); }
+        function deleteOrganizerAssetCard(id) { DB.organizers = DB.organizers.filter(o => o.id !== id); commitLocalStorage(); renderGraphicOrganizersCanvas(); }
 
-        function deleteOrganizerAssetCard(id) {
-            DB.organizers = DB.organizers.filter(o => o.id !== id);
-            commitLocalStorage();
-            renderGraphicOrganizersCanvas();
-        }
-
-        // ========================================================
-        // COMPONENT 5: STORIES ARCHIVE PORTFOLIO MANAGER
-        // ========================================================
         function renderStoriesTimelineArchiveCanvas() {
             const output = document.getElementById('saved-stories-container');
             if(!DB.stories || DB.stories.length === 0) {
-                output.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 italic border">The portfolio log does not contain any archived stories yet.</div>`;
+                output.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 italic border border-slate-200 shadow-sm">No saved portfolios indexed.</div>`;
                 return;
             }
-
             output.innerHTML = DB.stories.map(st => `
-                <div class="bg-white p-5 rounded-2xl border flex flex-col justify-between md:flex-row items-start md:items-center gap-4 shadow-sm">
-                    <div class="space-y-1 flex-1">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col justify-between md:flex-row items-start md:items-center gap-4 shadow-sm">
+                    <div class="space-y-0.5 flex-1">
                         <div class="flex items-center gap-3">
-                            <h4 class="font-bold text-base text-slate-800">${st.title}</h4>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">🕒 ${st.timestamp}</span>
+                            <h4 class="font-semibold text-slate-900 text-sm">${st.title}</h4>
+                            <span class="text-[9px] font-medium text-slate-400 uppercase">${st.timestamp}</span>
                         </div>
-                        <p class="text-sm font-medium text-slate-600 leading-relaxed">${st.content}</p>
+                        <p class="text-xs font-medium text-slate-600 leading-relaxed">${st.content}</p>
                     </div>
-                    <div class="flex gap-2 self-end md:self-center">
-                        <button onclick="deleteStoryFromHistoricalLog(${st.id})" class="px-2.5 py-1 text-red-500 hover:bg-red-50 border border-red-100 rounded-lg text-xs font-bold transition-all">✕ Delete</button>
-                    </div>
+                    <button onclick="deleteStoryFromHistoricalLog(${st.id})" class="px-2.5 py-1 text-red-500 hover:bg-red-50 border border-red-100 rounded-lg text-xs font-medium self-end md:self-center">Delete</button>
                 </div>
             `).join('');
         }
 
         function deleteStoryFromHistoricalLog(id) {
-            if(confirm("Permanently erase this social story entry text block from browser profile memories?")) {
-                DB.stories = DB.stories.filter(s => s.id !== id);
-                commitLocalStorage();
-                renderStoriesTimelineArchiveCanvas();
-            }
+            if(confirm("Permanently erase record logs?")) { DB.stories = DB.stories.filter(s => s.id !== id); commitLocalStorage(); renderStoriesTimelineArchiveCanvas(); }
         }
 
-        // ========================================================
-        // COMPONENT 6: SYSTEM SETTINGS AUDIO AUDIO PREVIEWS
-        // ========================================================
         function loadSettingsControlCanvas() {
-            document.getElementById('settings-theme').value = DB.preferences.theme || 'sky';
-            document.getElementById('settings-font').value = DB.preferences.font || 'font-fredoka';
+            document.getElementById('settings-theme').value = DB.preferences.theme || 'slate';
+            document.getElementById('settings-font').value = DB.preferences.font || 'font-inter';
             buildSpeechSynthesisVoiceDropdownOptions();
         }
 
         function buildSpeechSynthesisVoiceDropdownOptions() {
             const select = document.getElementById('settings-voice');
             if(!window.speechSynthesis) return;
-
-            const voices = window.speechSynthesis.getVoices();
-            select.innerHTML = voices.map(v => `
+            select.innerHTML = window.speechSynthesis.getVoices().map(v => `
                 <option value="${v.voiceURI}" ${DB.preferences.voiceURI === v.voiceURI ? 'selected' : ''}>${v.name} (${v.lang})</option>
             `).join('');
         }
@@ -787,54 +787,46 @@
         function executeVocalProfileAudioTest() {
             const select = document.getElementById('settings-voice');
             if(!select || !select.value) return;
-
             DB.preferences.voiceURI = select.value;
             commitLocalStorage();
-
-            const targetVoice = window.speechSynthesis.getVoices().find(v => v.voiceURI === select.value);
-            const voiceName = targetVoice ? targetVoice.name : "System Standard";
-            
-            executeAudioVoiceSpeechSynthesis(`My name is ${voiceName}.`);
+            const voice = window.speechSynthesis.getVoices().find(v => v.voiceURI === select.value);
+            executeAudioVoiceSpeechSynthesis(`My name is ${voice ? voice.name : 'System Voice'}.`);
         }
 
         if (window.speechSynthesis) {
             window.speechSynthesis.onvoiceschanged = () => {
-                if(!document.getElementById('view-settings').classList.contains('hidden')) {
-                    buildSpeechSynthesisVoiceDropdownOptions();
-                }
+                if(!document.getElementById('view-settings').classList.contains('hidden')) buildSpeechSynthesisVoiceDropdownOptions();
             };
         }
 
         function applySystemTheme(theme) {
-            DB.preferences.theme = theme;
-            commitLocalStorage();
+            DB.preferences.theme = theme; commitLocalStorage();
             const body = document.getElementById('app-body');
-            
-            // Re-apply correct typography alongside color palette state alterations
-            const activeFont = DB.preferences.font || 'font-fredoka';
-            
-            if(theme === 'slate') {
-                body.className = `bg-slate-950 text-slate-100 min-h-screen transition-colors duration-300 ${activeFont}`;
-            } else if(theme === 'lavender') {
-                body.className = `bg-purple-50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
-            } else if(theme === 'mint') {
-                body.className = `bg-emerald-50/60 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
-            } else if(theme === 'sunflower') {
-                body.className = `bg-amber-50 text-slate-900 min-h-screen transition-colors duration-300 ${activeFont}`;
-            } else {
-                body.className = `bg-sky-50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
-            }
+            const activeFont = DB.preferences.font || 'font-inter';
+            if(theme === 'sky') body.className = `bg-sky-50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
+            else if(theme === 'lavender') body.className = `bg-purple-50/50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
+            else if(theme === 'mint') body.className = `bg-emerald-50/50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
+            else if(theme === 'sunflower') body.className = `bg-amber-50 text-slate-900 min-h-screen transition-colors duration-300 ${activeFont}`;
+            else body.className = `bg-slate-50 text-slate-800 min-h-screen transition-colors duration-300 ${activeFont}`;
         }
 
         function applySystemFont(fontClass) {
-            DB.preferences.font = fontClass;
-            commitLocalStorage();
+            DB.preferences.font = fontClass; commitLocalStorage();
             const body = document.getElementById('app-body');
             body.classList.remove('font-fredoka', 'font-inter', 'font-comic', 'font-lexend');
             body.classList.add(fontClass);
         }
 
-        // Bootstrapping Sequence Initial Execution Loop Callouts
+        // Handle structural object tracking parsing arrays on load
+        activeChannels.forEach(ch => {
+            if(DB.sentence_frames[ch] && DB.sentence_frames[ch][0] && typeof DB.sentence_frames[ch][0].items[0] === 'string') {
+                DB.sentence_frames[ch].forEach(set => {
+                    set.items = set.items.map(str => ({ text: str, starred: false }));
+                });
+                commitLocalStorage();
+            }
+        });
+
         applySystemFont(DB.preferences.font);
         applySystemTheme(DB.preferences.theme);
         renderWorkspaceAccordionCanvas();
