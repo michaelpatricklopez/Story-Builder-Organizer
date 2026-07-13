@@ -3,436 +3,692 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Story Planner & History Logger</title>
-    <!-- Tailwind CSS for high fidelity framework rendering -->
+    <title>My Story Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Confetti library for immediate interactive visual gamification rewards -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;600&display=swap');
-        .font-kid { font-family: 'Fredoka', sans-serif; }
-        .font-adult { font-family: 'Inter', sans-serif; }
-        @media print {
-            .no-print { display: none !important; }
-            .print-card { border: none !important; box-shadow: none !important; background: white !important; color: black !important; }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;600&family=Open+Dyslexic&display=swap');
+        
+        /* Font Selection Classes */
+        .font-fredoka { font-family: 'Fredoka', sans-serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .font-dyslexic { font-family: 'Open Dyslexic', sans-serif, system-ui; }
+
+        /* Smooth Accordion Transitions */
+        .accordion-content { transition: max-height 0.3s ease-out, padding 0.3s ease; max-height: 0; overflow: hidden; }
+        .accordion-content.open { max-height: 500px; padding: 1rem; }
     </style>
 </head>
-<body id="app-body" class="bg-sky-100 text-slate-800 min-h-screen p-4 md:p-8 font-kid transition-colors duration-300">
+<body id="app-body" class="bg-sky-50 text-slate-800 min-h-screen font-fredoka transition-colors duration-300">
 
-    <div class="max-w-6xl mx-auto">
-        <!-- Main Application Navigation Control Panel -->
-        <header class="flex flex-col lg:flex-row justify-between items-center gap-4 mb-6 no-print bg-white/90 backdrop-blur p-4 rounded-2xl shadow-sm border border-white/20">
-            <div>
-                <h1 id="app-title" class="text-3xl font-bold text-sky-600">✨ Premium Story Map Pro</h1>
-                <p id="app-subtitle" class="text-sm text-slate-500">Interactive curriculum scaffolds with localized history portfolio engines.</p>
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Persistent Left Sidebar Navigation Control Pane -->
+        <aside id="sidebar-nav" class="w-full md:w-64 bg-white shadow-md md:min-h-screen p-5 flex flex-col justify-between border-r border-slate-100 no-print">
+            <div class="space-y-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-sky-600 tracking-tight flex items-center gap-2">📖 Story Builder</h1>
+                    <p class="text-xs text-slate-400 mt-1">Customizable Narrative Workspace</p>
+                </div>
+                <nav class="space-y-1.5">
+                    <button onclick="switchView('create')" id="nav-create" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all bg-sky-500 text-white shadow-sm">✨ Create Story</button>
+                    <button onclick="switchView('organizers')" id="nav-organizers" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">🖼️ Graphic Organizers</button>
+                    <button onclick="switchView('frames')" id="nav-frames" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">💬 Sentence Frames</button>
+                    <button onclick="switchView('wordbanks')" id="nav-wordbanks" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">🎯 Word Banks</button>
+                    <button onclick="switchView('stories')" id="nav-stories" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">📜 My Saved Stories</button>
+                </nav>
             </div>
+            <div class="pt-4 border-t">
+                <button onclick="switchView('settings')" id="nav-settings" class="w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-500 hover:bg-slate-100 flex items-center gap-2">⚙️ System Settings</button>
+            </div>
+        </aside>
+
+        <!-- Primary Application Main Content Workspace Box -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
             
-            <div class="flex flex-wrap items-center gap-3">
-                <!-- App Mode Selection -->
-                <div class="flex bg-slate-100 p-1 rounded-xl text-sm font-semibold">
-                    <button onclick="setStoryType('personal')" id="btn-type-personal" class="px-3 py-1.5 rounded-lg transition-all bg-white text-slate-800 shadow-sm font-bold">🏡 Self Story</button>
-                    <button onclick="setStoryType('literature')" id="btn-type-literature" class="px-3 py-1.5 rounded-lg transition-all text-slate-500 hover:text-slate-800">📚 Book Review</button>
-                </div>
-                <!-- Student Age Layout Toggles -->
-                <div class="flex bg-slate-100 p-1 rounded-xl text-sm font-semibold">
-                    <button onclick="setAgeMode('kid')" id="btn-mode-kid" class="px-3 py-1.5 rounded-lg transition-all bg-sky-500 text-white shadow-sm">🎈 Kid Mode</button>
-                    <button onclick="setAgeMode('adult')" id="btn-mode-adult" class="px-3 py-1.5 rounded-lg transition-all text-slate-600 hover:bg-slate-200">💼 Older Mode</button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Dynamic Graphic Organizer Steps Checklist Tracker -->
-        <div class="no-print bg-white p-3 rounded-xl shadow-sm mb-6 flex justify-between items-center overflow-x-auto gap-2">
-            <div id="go-step-0" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-sky-500 text-white font-bold text-xs sm:text-sm">👤 <span class="step-lbl">Who</span></div>
-            <div id="go-step-1" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">📍 <span class="step-lbl">Where</span></div>
-            <div id="go-step-2" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">🏁 <span class="step-lbl">What</span></div>
-            <div id="go-step-3" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">💡 <span class="step-lbl">Why</span></div>
-            <div id="go-step-4" class="flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm">💭 <span class="step-lbl">Reflection</span></div>
-        </div>
-
-        <!-- Primary Canvas Structure Layout Split Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <!-- Left Workspace Panel Column -->
-            <div class="lg:col-span-2 space-y-4 no-print">
-                <div class="bg-white p-6 rounded-2xl shadow-sm space-y-6">
-                    <!-- Step Section 1: Frame Selection -->
+            <!-- VIEW A: CREATE PAGE -->
+            <section id="view-create" class="view-panel space-y-6">
+                <div class="flex justify-between items-center border-b pb-3">
                     <div>
-                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2 text-slate-700 id-lbl">
-                            <span>💬</span> 1. Choose a Sentence Starter:
-                        </h3>
-                        <div id="frame-container" class="flex flex-wrap gap-2"></div>
-                    </div>
-
-                    <!-- Step Section 2: Injected Target Word Bank Grid -->
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 id="wordbank-title" class="text-lg font-bold flex items-center gap-2 text-slate-700 id-lbl">
-                                <span>🎯</span> 2. Choose Your Answer Target:
-                            </h3>
-                            <!-- Custom Word Input Scaffolding Engine -->
-                            <button onclick="promptCustomWord()" class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold rounded-lg border border-amber-300 transition-all flex items-center gap-1">
-                                ⌨️ + Type Custom Word
-                            </button>
-                        </div>
-                        <div id="wordbank-container" class="flex flex-wrap gap-2 max-h-56 overflow-y-auto p-1"></div>
+                        <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Create Workspace</h2>
+                        <p class="text-sm text-slate-500">Expand each section vertically below to assemble your story map.</p>
                     </div>
                 </div>
 
-                <!-- Pagination Progress Navigation Row Bar -->
-                <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center">
-                    <button onclick="prevStep()" id="btn-prev" class="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed" disabled>← Previous Item</button>
-                    <button onclick="nextStep()" id="btn-next" class="px-4 py-2 text-sm font-bold rounded-lg bg-sky-500 text-white hover:bg-sky-600 shadow-sm transition-all">Next Question →</button>
-                </div>
-            </div>
-
-            <!-- Right Live Workspace Profile Sheet Panel View Column -->
-            <div class="lg:col-span-1 space-y-4">
-                <div id="story-card" class="print-card bg-white p-6 rounded-2xl shadow-sm border-2 border-dashed border-sky-200 min-h-[460px] flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                            <h2 id="preview-header" class="text-xl font-bold text-sky-600"><span id="output-title">📝 My Story Map</span></h2>
-                            <!-- Audio Readout Accessibility Feature Button Component -->
-                            <button onclick="readStoryAloud()" class="no-print p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm title-btn transition-all" title="Speak complete text summary out loud">
-                                🔊 Speak
-                            </button>
-                        </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Columns: Vertical Progressive Accordion Builder Block -->
+                    <div class="lg:col-span-2 space-y-3 no-print">
+                        <!-- Dynamic Loop Generation targets this container box -->
+                        <div id="vertical-accordion" class="space-y-3"></div>
                         
-                        <!-- Visual Text Generator Output Workspace Box -->
-                        <div id="story-output-box" class="space-y-3 text-base md:text-lg leading-relaxed text-slate-700">
-                            <p id="p-step-0" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 1 missing...</span></p>
-                            <p id="p-step-1" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 2 missing...</span></p>
-                            <p id="p-step-2" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 3 missing...</span></p>
-                            <p id="p-step-3" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 4 missing...</span></p>
-                            <p id="p-step-4" class="p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]"><span class="text-slate-400 text-xs block italic">Step 5 missing...</span></p>
+                        <!-- Compiled Sentence Block Summary Evaluation Button Element -->
+                        <div class="pt-4">
+                            <button onclick="compileActiveParagraph()" class="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-bold rounded-xl shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2 text-base">
+                                📑 Show "My Paragraph" Panel View
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Actions Dispatch Interface -->
-                    <div class="mt-6 space-y-2 no-print">
-                        <button onclick="window.print()" class="w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">🖨️ Print Document</button>
-                        <button onclick="saveAndCommitToPortfolio()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">💾 Commit to Digital History</button>
-                        <button onclick="shareViaEmail()" class="w-full py-2.5 px-4 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">📧 Email Log to Parent</button>
-                        <button onclick="resetApp()" class="w-full py-1.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs rounded-xl transition-all">Clear Active Builder Map</button>
+                    <!-- Right Column: Compiled View Modal / Card Display Anchor -->
+                    <div class="lg:col-span-1">
+                        <div id="compiled-paragraph-card" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-dashed border-sky-200 min-h-[400px] flex flex-col justify-between transition-all">
+                            <div>
+                                <div class="flex justify-between items-center border-b pb-2 mb-4">
+                                    <h3 class="text-xl font-bold text-sky-600">📝 Live Output Sheet</h3>
+                                    <button onclick="speakText()" class="no-print p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-sm" title="Vocal Speech Synthesizer Readout">🔊 Speak</button>
+                                </div>
+                                <div id="live-text-composite" class="space-y-2 text-lg leading-relaxed text-slate-400 italic">
+                                    Paragraph text will render here as selections are logged into the builder tool layers...
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t space-y-2 no-print">
+                                <input type="text" id="active-story-title" placeholder="Give this story a unique title..." class="w-full px-3 py-2 border rounded-xl text-sm mb-2 focus:outline-sky-400 bg-slate-50 text-slate-800 font-semibold" />
+                                <button onclick="saveActiveStory()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all shadow-sm">💾 Archive to My Stories</button>
+                                <button onclick="window.print()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all">🖨️ Print Document</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- Historical Performance Portfolio Component Layout Section Drawer -->
-        <section class="no-print bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-colors duration-300" id="history-section-panel">
-            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h3 class="text-xl font-bold flex items-center gap-2 text-slate-700 section-hdr-title">
-                    <span>📜</span> Device Portfolio History <span class="text-xs font-normal text-slate-400">(Saved locally on this browser)</span>
-                </h3>
-                <button onclick="clearAllDeviceHistory()" class="text-xs font-semibold text-red-400 hover:text-red-600">Clear History Log</button>
-            </div>
-            <div id="history-portfolio-output" class="space-y-3 text-sm max-h-64 overflow-y-auto pr-2">
-                <!-- Script populates saved entries here -->
-            </div>
-        </section>
+            <!-- VIEW B: GRAPHIC ORGANIZERS PAGE -->
+            <section id="view-organizers" class="view-panel hidden space-y-6">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Graphic Organizer Custom Library</h2>
+                    <p class="text-sm text-slate-500">Upload profile pictures and manage names of essential characters, key participants, or target locations.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-2xl space-y-4">
+                    <h3 class="text-lg font-bold border-b pb-2">➕ Add New Visual Prompt Card Asset</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Asset Entity Classification</label>
+                            <select id="go-input-type" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold">
+                                <option value="who">Character / Person (Who)</option>
+                                <option value="where">Location / Setting (Where)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Profile Name / Identifier</label>
+                            <input type="text" id="go-input-name" placeholder="e.g., Mrs. Smith, The Cafeteria" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Upload Illustrative Prompt Image</label>
+                        <input type="file" id="go-input-file" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100" />
+                    </div>
+                    <button onclick="addGraphicOrganizerAsset()" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm shadow-sm transition-all">Save Card Matrix Item</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-amber-600">👤 Logged Characters</h4><div id="go-list-who" class="grid grid-cols-2 gap-3"></div></div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm"><h4 class="font-bold border-b pb-1 mb-3 text-blue-600">📍 Logged Settings & Places</h4><div id="go-list-where" class="grid grid-cols-2 gap-3"></div></div>
+                </div>
+            </section>
+
+            <!-- VIEW C: SENTENCE FRAMES CONFIG MANAGER PAGE -->
+            <section id="view-frames" class="view-panel hidden space-y-6">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Sentence Framework Configuration Hub</h2>
+                    <p class="text-sm text-slate-500">Customize the phrase templates given to students across each functional segment level block.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="frames-config-grid"></div>
+            </section>
+
+            <!-- VIEW D: WORD BANKS CONFIG MANAGER PAGE -->
+            <section id="view-wordbanks" class="view-panel hidden space-y-6">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Word Bank Customization Studio</h2>
+                    <p class="text-sm text-slate-500">Build interactive vocabulary arrays. Assign custom programmatic accent hex colors for each category column layer.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="wordbanks-config-grid"></div>
+            </section>
+
+            <!-- VIEW E: MY STORIES PORTFOLIO HUB PAGE -->
+            <section id="view-stories" class="view-panel hidden space-y-6">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">My Saved Stories Log</h2>
+                    <p class="text-sm text-slate-500">Review, re-verify, edit, or remove historically compiled tracking records saved on this engine.</p>
+                </div>
+                <div id="saved-stories-container" class="space-y-4"></div>
+            </section>
+
+            <!-- VIEW F: SYSTEM SETTINGS MANAGEMENT PAGE -->
+            <section id="view-settings" class="view-panel hidden space-y-6">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">System Settings Configuration</h2>
+                    <p class="text-sm text-slate-500">Modify global application layout rendering frameworks, custom typographic weights, and text-to-speech synthesize profiles.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Interface System Design Palette Theme</label>
+                        <select id="settings-theme" onchange="applySystemTheme(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold">
+                            <option value="sky">Classic Sky Blue Canvas Profile</option>
+                            <option value="slate">Dusk Slate Dark Mode Architecture</option>
+                            <option value="lavender">Calm Lavender Accent Profile</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Typographic Accessibility Font Metric Face</label>
+                        <select id="settings-font" onchange="applySystemFont(this.value)" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold">
+                            <option value="font-fredoka">Fredoka Dynamic High Visibility Rounded</option>
+                            <option value="font-inter">Inter Standard Corporate Minimalist Line</option>
+                            <option value="font-dyslexic">OpenDyslexic Assistive Reading Engine</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Vocal Speech Synthesizer Output Voice Engine Profile</label>
+                        <select id="settings-voice" class="w-full px-3 py-2 border rounded-xl bg-slate-50 text-sm font-semibold"></select>
+                    </div>
+                    <div class="pt-4 border-t flex gap-2">
+                        <button onclick="exportSystemConfiguration()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all">📤 Backup Configuration Profile</button>
+                        <button onclick="importSystemConfigurationPrompt()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all">📥 Load Backup Configuration</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
 
+    <!-- Core Database Engineering Logic Engine Block -->
     <script>
-        // Core Internal Control State Architecture Engine
-        let ageMode = 'kid';
-        let storyType = 'personal';
-        let currentStep = 0; 
-
-        const definitions = {
-            personal: { labels: ["Who", "Where", "What", "Why", "Reflection"] },
-            literature: { labels: ["Characters", "Setting", "Plot Event", "Theme / Motive", "Book Review"] }
-        };
-
-        const wordLibrary = {
-            kid: {
-                personal: [
-                    { title: "Who", color: "text-amber-600 font-bold", frames: ["Today, I spent time with", "This morning, our group included", "I did activities with"], words: ["Mom and Dad", "my school friends", "my classroom teacher", "myself independently"] },
-                    { title: "Where", color: "text-blue-600 font-bold", frames: ["We worked over at the", "I spent my time inside the", "We traveled directly to the"], words: ["school playground 🛝", "main library 📚", "cafeteria lunchroom 🍎", "home living room 🏠"] },
-                    { title: "What", color: "text-emerald-600 font-bold", frames: ["Our main project was to", "I practiced how to", "We had fun when we did"], words: ["paint a creative picture 🎨", "read an interesting book 📖", "eat a healthy snack 🥛", "build with learning blocks 🧱"] },
-                    { title: "Why", color: "text-pink-600 font-bold", frames: ["We engaged in this because", "This assignment helps me to", "This task was done because"], words: ["it was recess choice time", "we wanted to learn new things", "our schedule required it", "I wanted to practice my goals"] },
-                    { title: "Reflection", color: "text-purple-600 font-bold", frames: ["My assessment is that it felt", "Looking back, I thought it was", "I predict next time will be"], words: ["super awesome! 😄", "pretty good / calm 🙂", "a little bit hard 🙁", "tiring or boring 🥱"] }
-                ],
-                literature: [
-                    { title: "Characters", color: "text-amber-600 font-bold", frames: ["The main characters analyzed are", "The focus of this reading is about", "The story features a central figure named"], words: ["a brave animal hero 🐻", "a fast-learning kid 👦", "a group of loyal friends 👥", "a magical forest creature 🦄"] },
-                    { title: "Setting", color: "text-blue-600 font-bold", frames: ["The narrative framework is set in a", "The scenes take place across a", "The backdrop of the text is a"], words: ["mysterious hidden woods 🌲", "busy public elementary school 🏫", "futuristic space colony 🚀", "peaceful country farmhouse 🏡"] },
-                    { title: "Plot Event", color: "text-emerald-600 font-bold", frames: ["The main plot development involves", "In the middle of the book,", "A major event occurs when characters"], words: ["going on an unexpected trip", "solving a challenging mystery", "discovering a hidden power", "helping a neighbor out of trouble"] },
-                    { title: "Theme / Motive", color: "text-pink-600 font-bold", frames: ["The underlying lesson is to always", "The character does this to prove that", "The main message of the text is to"], words: ["show true kindness to others", "never give up on your goals", "work together as a team", "explore and ask questions"] },
-                    { title: "Book Review", color: "text-purple-600 font-bold", frames: ["My analytical book review is that it was", "I evaluated the storyline and found it", "I recommend this book because it was"], words: ["incredibly exciting 📖", "really funny and witty 😂", "a little bit sad or serious 😢", "confusing to follow along 🧩"] }
-                ]
+        // Reactive In-Memory Layout Configuration Baselines Matrices
+        const channels = ["who", "where", "what", "why", "reflection"];
+        
+        // Setup Functional Core Cache Layer Defaults Data
+        const baselineData = {
+            sentence_frames: {
+                who: ["Today, I interacted with", "Our main team group included", "I spent my time with"],
+                where: ["We completed our tasks at the", "I executed assignments inside the", "We traveled over to the"],
+                what: ["The core activity completed was", "I practiced specialized skills in", "We worked directly on processing"],
+                why: ["This was necessary because", "I worked on this module to ensure I build", "This project was selected so I can master"],
+                reflection: ["My personal assessment is that it was", "Looking back, I evaluated the performance as", "I anticipate future assignments will be"]
             },
-            adult: {
-                personal: [
-                    { title: "Who", color: "text-amber-500 font-bold", frames: ["For today's objective tracker, I collaborated with", "The primary personnel involved included", "Independent workflow was completed alongside"], words: ["the community vocational team", "my peer mentor cohort", "assigned campus staff members", "my transition support group"] },
-                    { title: "Where", color: "text-blue-500 font-bold", frames: ["Operational targets were completed inside the", "The designated workspace for this track was the", "Operations were carried out at the"], words: ["technology learning center", "independent workshop facility", "off-site community worksite", "specialized media lab area"] },
-                    { title: "What", color: "text-emerald-500 font-bold", frames: ["The core actionable milestone met was", "Tasks heavily prioritized processing", "Efforts focused specifically on"], words: ["updating my digital portfolio files", "auditing structural task inventories", "reviewing self-regulation metrics", "completing formal training modules"] },
-                    { title: "Why", color: "text-pink-500 font-bold", frames: ["This directly targets my long-term goal to", "This matches criteria designed to expand", "Execution of this module ensures I build"], words: ["increase professional independence", "strengthen critical problem-solving", "improve clear self-advocacy pathways", "attain mastery of scheduling rules"] },
-                    { title: "Reflection", color: "text-purple-500 font-bold", frames: ["My formal self-evaluation of this performance is", "Regarding stress and engagement levels, it was", "Looking ahead, I anticipate future tracks will be"], words: ["highly successful and accurate", "standard / met essential baselines", "demanding / required accommodations", "inefficient / requires modification"] }
-                ],
-                literature: [
-                    { title: "Characters", color: "text-amber-500 font-bold", frames: ["The principal protagonists under analysis are", "The character arc tracks the development of", "The text heavily centers around relationships between"], words: ["marginalized historical figures", "conflicted, complex individuals", "competing structural social groups", "an unreliable, isolated narrator"] },
-                    { title: "Setting", color: "text-blue-500 font-bold", frames: ["The spatial and historical setting is established within", "The narrative geography layout takes place in", "The author positions the characters against"], words: ["a stark post-industrial urban environment", "a highly structured dystopian setting", "a changing pre-war historical period", "an isolated rural agricultural zone"] },
-                    { title: "Plot Event", color: "text-emerald-500 font-bold", frames: ["The primary dramatic conflict is driven by", "The narrative climax is reached when", "The thematic trajectory changes immediately after"], words: ["a systematic breakdown of institutional rules", "a fundamental choice between personal goals", "an unexpected turn in community alignment", "the loss of an invaluable structural asset"] },
-                    { title: "Theme / Motive", color: "text-pink-500 font-bold", frames: ["The structural message serves primarily to critique", "The internal motivations highlight the struggle to", "The author uses this framework to explore"], words: ["modern societal authority structures", "the fragile nature of personal resilience", "ethical dilemmas under extreme duress", "how historical memory modifies identity"] },
-                    { title: "Book Review", color: "text-purple-500 font-bold", frames: ["My objective literary evaluation of this text is", "The structural integrity of the narrative makes it", "Compared to similar literary coursework, this is"], words: ["profoundly analytical and engaging", "stylistically sound but predictable", "overly dense / lacks logical pacing", "critically relevant to societal analysis"] }
-                ]
-            }
+            word_banks: {
+                who: { color: "#d97706", words: ["Mom and Dad", "my classmates", "the instructional teacher", "myself independently"] },
+                where: { color: "#2563eb", words: ["school playground", "central media lab library", "vocational training center", "home workspace"] },
+                what: { color: "#059669", words: ["painting a canvas artwork", "reading an educational chapter", "sorting functional components", "completing physical health exercises"] },
+                why: { color: "#db2777", words: ["it was part of my scheduled goals", "we wanted to learn new things", "it helps build my independence", "my schedule timeline required it"] },
+                reflection: { color: "#7c3aed", words: ["highly successful and awesome!", "completely calm and manageable", "somewhat difficult / required extra effort", "tiring and required modifications"] }
+            },
+            organizers: [],
+            stories: [],
+            active_selections: { who: { frame:'', word:'' }, where: { frame:'', word:'' }, what: { frame:'', word:'' }, why: { frame:'', word:'' }, reflection: { frame:'', word:'' } },
+            preferences: { theme: 'sky', font: 'font-fredoka', voiceURI: '' }
         };
 
-        let sessionAnswers = Array(5).fill(null).map(() => ({ frame: '', word: '' }));
+        // Initialize App State Storage Pointer Variables
+        let DB = JSON.parse(localStorage.getItem('msb_v2_database')) || baselineData;
+        let openAccordionTab = null;
 
-        function setStoryType(type) {
-            storyType = type;
-            document.getElementById('btn-type-personal').className = type === 'personal' ? "px-3 py-1.5 rounded-lg transition-all bg-white text-slate-800 shadow-sm font-bold" : "px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-600";
-            document.getElementById('btn-type-literature').className = type === 'literature' ? "px-3 py-1.5 rounded-lg transition-all bg-white text-slate-800 shadow-sm font-bold" : "px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-600";
-            document.getElementById('output-title').innerText = type === 'personal' ? "📝 My Story Map" : "📖 Book Summary Map";
-            updateLabels();
-            resetApp();
+        function saveDB() {
+            localStorage.setItem('msb_v2_database', JSON.stringify(DB));
         }
 
-        function setAgeMode(mode) {
-            ageMode = mode;
-            const body = document.getElementById('app-body');
-            const title = document.getElementById('app-title');
-            const sub = document.getElementById('app-subtitle');
-            const bKid = document.getElementById('btn-mode-kid');
-            const bAdult = document.getElementById('btn-mode-adult');
-            const outBox = document.getElementById('story-output-box');
-            const historyPanel = document.getElementById('history-section-panel');
-            const idLabels = document.querySelectorAll('.id-lbl');
-            const secHdr = document.querySelector('.section-hdr-title');
-
-            if (mode === 'adult') {
-                body.className = "bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8 font-adult transition-colors duration-300";
-                title.className = "text-3xl font-bold text-indigo-400";
-                title.innerText = "📋 Student Daily Log Workspace";
-                sub.className = "text-sm text-slate-400";
-                sub.innerText = "Systematic self-regulation and narrative routine builder.";
-                bAdult.className = "px-3 py-1.5 rounded-lg font-bold transition-all bg-indigo-600 text-white shadow-sm";
-                bKid.className = "px-3 py-1.5 rounded-lg font-bold transition-all text-slate-400 hover:bg-slate-800";
-                document.getElementById('preview-header').className = "text-xl font-bold text-indigo-400";
-                document.getElementById('story-card').classList.replace('border-sky-200', 'border-slate-700');
-                outBox.classList.replace('text-slate-700', 'text-slate-200');
-                historyPanel.classList.replace('bg-white', 'bg-slate-800');
-                historyPanel.classList.replace('border-slate-100', 'border-slate-700');
-                secHdr.classList.replace('text-slate-700', 'text-slate-200');
-                idLabels.forEach(l => l.classList.replace('text-slate-700', 'text-slate-300'));
-            } else {
-                body.className = "bg-sky-100 text-slate-800 min-h-screen p-4 md:p-8 font-kid transition-colors duration-300";
-                title.className = "text-3xl font-bold text-sky-600";
-                title.innerText = "✨ Premium Story Map Pro";
-                sub.className = "text-sm text-slate-500";
-                sub.innerText = "Interactive curriculum scaffolds with localized history portfolio engines.";
-                bKid.className = "px-3 py-1.5 rounded-lg font-bold transition-all bg-sky-500 text-white shadow-sm";
-                bAdult.className = "px-3 py-1.5 rounded-lg font-bold transition-all text-slate-600 hover:bg-slate-200";
-                document.getElementById('preview-header').className = "text-xl font-bold text-sky-600";
-                document.getElementById('story-card').classList.replace('border-slate-700', 'border-sky-200');
-                outBox.classList.replace('text-slate-200', 'text-slate-700');
-                historyPanel.classList.replace('bg-slate-800', 'bg-white');
-                historyPanel.classList.replace('border-slate-700', 'border-slate-100');
-                secHdr.classList.replace('text-slate-200', 'text-slate-700');
-                idLabels.forEach(l => l.classList.replace('text-slate-300', 'text-slate-700'));
-            }
-            resetApp();
-        }
-
-        function updateLabels() {
-            const currentLabels = definitions[storyType].labels;
-            const indicators = document.querySelectorAll('.step-lbl');
-            indicators.forEach((ind, idx) => { ind.innerText = currentLabels[idx]; });
-        }
-
-        function renderWorkspace() {
-            const stepConfig = wordLibrary[ageMode][storyType][currentStep];
-            document.getElementById('wordbank-title').innerHTML = `<span>🎯</span> 2. Choose ${definitions[storyType].labels[currentStep]} Answer Target:`;
+        // SPA Navigation Framework Route Pipeline Dispatcher Engine
+        function switchView(target) {
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`view-${target}`).classList.remove('hidden');
             
-            // Set Checklist Tab Bar Highlights
-            for(let i=0; i<5; i++) {
-                const el = document.getElementById(`go-step-${i}`);
-                if(i === currentStep) {
-                    el.className = `flex-1 min-w-[100px] text-center p-2 rounded-lg font-bold text-xs sm:text-sm bg-sky-500 text-white ring-2 ring-offset-2 ring-sky-400`;
-                } else if(sessionAnswers[i].word) {
-                    el.className = `flex-1 min-w-[100px] text-center p-2 rounded-lg font-bold text-xs sm:text-sm bg-emerald-500 text-white`;
-                } else {
-                    el.className = ageMode === 'kid' 
-                        ? `flex-1 min-w-[100px] text-center p-2 rounded-lg bg-white text-slate-400 border border-slate-200 font-semibold text-xs sm:text-sm`
-                        : `flex-1 min-w-[100px] text-center p-2 rounded-lg bg-slate-800 text-slate-500 border border-slate-700 font-semibold text-xs sm:text-sm`;
-                }
+            document.querySelectorAll('#sidebar-nav nav button').forEach(b => {
+                b.className = "w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:bg-slate-100";
+            });
+            const activeBtn = document.getElementById(`nav-${target}`);
+            if(activeBtn && target !== 'settings') {
+                const skyTheme = DB.preferences.theme === 'sky';
+                activeBtn.className = `w-full text-left px-3 py-2.5 rounded-xl font-bold text-sm transition-all ${DB.preferences.theme === 'slate' ? 'bg-indigo-600' : 'bg-sky-500'} text-white shadow-sm`;
             }
 
-            // Build Sentence Frames UI Buttons
-            const frameBox = document.getElementById('frame-container');
-            frameBox.innerHTML = stepConfig.frames.map(f => {
-                const active = sessionAnswers[currentStep].frame === f;
-                return `<button onclick="selectToken('frame', '${f}')" class="border-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-sky-500 border-sky-500 text-white' : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-400'}">${f}</button>`;
-            }).join('');
-
-            // Build Word Bank UI Buttons
-            const wbBox = document.getElementById('wordbank-container');
-            wbBox.innerHTML = stepConfig.words.map(w => {
-                const active = sessionAnswers[currentStep].word === w;
-                return `<button onclick="selectToken('word', '${w}')" class="border-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-slate-700 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-400'}">${w}</button>`;
-            }).join('');
-
-            // Update Pagination Button States
-            document.getElementById('btn-prev').disabled = currentStep === 0;
-            document.getElementById('btn-prev').className = currentStep === 0 
-                ? "px-4 py-2 text-sm rounded-lg bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed" 
-                : "px-4 py-2 text-sm rounded-lg bg-slate-200 text-slate-700 font-semibold hover:bg-slate-300";
-            document.getElementById('btn-next').innerText = currentStep === 4 ? "Complete Profile 🏆" : "Next Question →";
+            // Route Specific Component Mount Lifecycle Hooks
+            if(target === 'create') renderAccordionCanvas();
+            if(target === 'organizers') renderOrganizersCanvas();
+            if(target === 'frames') renderFramesConfigCanvas();
+            if(target === 'wordbanks') renderWordBanksConfigCanvas();
+            if(target === 'stories') renderStoriesPortfolioCanvas();
+            if(target === 'settings') loadSettingsConfigurationPanel();
         }
 
-        // Custom Input Box Implementation Action
-        function promptCustomWord() {
-            const input = prompt(`Enter a custom target token response for [${definitions[storyType].labels[currentStep]}]:`);
-            if (input && input.trim() !== "") {
-                selectToken('word', input.trim());
-            }
-        }
-
-        function selectToken(type, val) {
-            sessionAnswers[currentStep][type] = val;
-            updateLivePreviewBlock();
-            renderWorkspace();
-        }
-
-        function updateLivePreviewBlock() {
-            const stepConfig = wordLibrary[ageMode][storyType][currentStep];
-            const activeData = sessionAnswers[currentStep];
-            const targetParagraph = document.getElementById(`p-step-${currentStep}`);
-
-            if (activeData.frame || activeData.word) {
-                let frameSpan = `<span class="opacity-90 font-normal">${activeData.frame}</span>`;
-                let wordSpan = activeData.word ? ` <span class="${stepConfig.color}">${activeData.word}</span>.` : '...';
-                targetParagraph.innerHTML = `${frameSpan}${wordSpan}`;
+        // ==========================================
+        // MODULE 1: CREATE VIEW ACCORDION ENGINE
+        // ==========================================
+        function renderAccordionCanvas() {
+            const acc = document.getElementById('vertical-accordion');
+            acc.innerHTML = channels.map((ch, idx) => {
+                const isOpen = openAccordionTab === ch;
+                const config = DB.word_banks[ch];
+                const active = DB.active_selections[ch];
                 
-                targetParagraph.className = ageMode === 'kid'
-                    ? "p-3 rounded-xl bg-white border border-slate-200 shadow-sm text-base md:text-lg transition-all"
-                    : "p-3 rounded-xl bg-slate-800/50 border border-slate-700 text-base md:text-lg transition-all";
-            }
+                // Read display labels
+                const titleText = ch.toUpperCase();
+                const displaySummaryText = (active.frame || active.word) ? `"${active.frame} ... ${active.word}"` : 'Empty selection slot...';
+
+                return `
+                    <div class="bg-white border rounded-2xl shadow-sm overflow-hidden border-slate-200">
+                        <button onclick="toggleAccordionTab('${ch}')" class="w-full px-5 py-4 text-left flex justify-between items-center bg-slate-50 border-b hover:bg-slate-100/80 transition-all">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded-md text-white mr-2" style="background-color: ${config.color}">${titleText}</span>
+                                <span class="text-xs text-slate-400 font-semibold" id="acc-lbl-${ch}">${displaySummaryText}</span>
+                            </div>
+                            <span class="text-sm text-slate-400">${isOpen ? '▼' : '▶'}</span>
+                        </button>
+                        <div class="accordion-content ${isOpen ? 'open' : ''} space-y-4">
+                            <!-- Sentence Frames Array Blocks Row -->
+                            <div>
+                                <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Select Target Frame Starter phrase:</h4>
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${(DB.sentence_frames[ch] || []).map(fr => `
+                                        <button onclick="selectTokenItem('${ch}', 'frame', '${fr.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all ${active.frame === fr ? 'bg-slate-700 border-slate-700 text-white' : 'bg-white text-slate-700 hover:border-slate-300'}">${fr}</button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <!-- Word Banks Data Element Row Wrapper Grid -->
+                            <div>
+                                <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Select Target Vocabulary Item:</h4>
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${config.words.map(w => `
+                                        <button onclick="selectTokenItem('${ch}', 'word', '${w.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg transition-all ${active.word === w ? 'text-white shadow-inner font-bold' : 'bg-white text-slate-700 hover:border-slate-300'}" style="${active.word === w ? 'background-color:'+config.color+'; border-color:'+config.color : ''}">${w}</button>
+                                    `).join('')}
+                                    
+                                    <!-- Render Contextual Graphic Organizer Association Cards inside Who/Where components -->
+                                    ${(ch === 'who' || ch === 'where') ? DB.organizers.filter(o => o.type === ch).map(card => `
+                                        <button onclick="selectTokenItem('${ch}', 'word', '${card.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 border text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all ${active.word === card.name ? 'text-white shadow-inner font-bold' : 'bg-amber-50/60 text-slate-700 border-amber-200 hover:border-amber-300'}" style="${active.word === card.name ? 'background-color:'+config.color+'; border-color:'+config.color : ''}">
+                                            ${card.img ? `<img src="${card.img}" class="w-4 h-4 object-cover rounded-md" />` : '🖼️'} ${card.name}
+                                        </button>
+                                    `).join('') : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            updateLiveCompositePanelOutput();
         }
 
-        function nextStep() {
-            if (currentStep < 4) {
-                currentStep++;
-                renderWorkspace();
-            } else {
-                // Celebration Reward Trigger Algorithm
-                confetti({ particleCount: 140, spread: 80, origin: { y: 0.6 } });
-            }
+        function toggleAccordionTab(ch) {
+            openAccordionTab = (openAccordionTab === ch) ? null : ch;
+            renderAccordionCanvas();
         }
 
-        function prevStep() {
-            if (currentStep > 0) {
-                currentStep--;
-                renderWorkspace();
-            }
+        function selectTokenItem(ch, layer, value) {
+            DB.active_selections[ch][layer] = value;
+            saveDB();
+            renderAccordionCanvas();
         }
 
-        // Accessibility Audio Text-To-Speech Execution Routine
-        function readStoryAloud() {
-            const blocks = [];
-            for (let i = 0; i < 5; i++) {
-                const text = document.getElementById(`p-step-${i}`).innerText;
-                if (!text.includes("tracker unselected") && !text.includes("missing")) {
-                    blocks.push(text);
+        function updateLiveCompositePanelOutput() {
+            const out = document.getElementById('live-text-composite');
+            const constructedPhrasesArray = [];
+
+            channels.forEach(ch => {
+                const act = DB.active_selections[ch];
+                const col = DB.word_banks[ch].color;
+                if(act.frame || act.word) {
+                    constructedPhrasesArray.push(`<span>${act.frame}</span> <span style="color: ${col}; font-weight: 700;">${act.word || '...'}</span>.`);
                 }
+            });
+
+            if(constructedPhrasesArray.length === 0) {
+                out.innerHTML = `Paragraph text will render here as selections are logged into the builder tool layers...`;
+                out.className = "space-y-2 text-lg leading-relaxed text-slate-400 italic";
+            } else {
+                out.innerHTML = constructedPhrasesArray.join(" ");
+                out.className = "space-y-2 text-lg leading-relaxed text-slate-800 transition-all font-semibold";
             }
-            if (blocks.length === 0) {
-                alert("The canvas profile map currently contains no readable data elements.");
+        }
+
+        function compileActiveParagraph() {
+            // Evaluates active selections block and pops up confirmation notification summary metrics window
+            const lines = [];
+            channels.forEach(ch => {
+                const act = DB.active_selections[ch];
+                if(act.frame || act.word) lines.push(`${act.frame} ${act.word || '...'}.`);
+            });
+            
+            if(lines.length === 0) {
+                alert("The builder workspace canvas currently contains no selections to construct a narrative paragraph.");
                 return;
             }
-            window.speechSynthesis.cancel(); // Terminate existing voice queues
-            const speechString = blocks.join(" ");
-            const utterance = new SpeechSynthesisUtterance(speechString);
-            utterance.rate = 0.9; // Lower playback pacing slightly for structural comprehension
-            window.speechSynthesis.speak(utterance);
+            confetti({ particleCount: 120, spread: 60 });
+            alert(`📑 Compiled Paragraph Composite View:\n\n${lines.join(" ")}`);
         }
 
-        // Parent Communication Quick-Share Direct Pipeline Channel
-        function shareViaEmail() {
-            const compiledText = getPlainTextStory();
-            if(!compiledText) return;
-            const subject = encodeURIComponent(`Student Learning Log: ${new Date().toLocaleDateString()}`);
-            const body = encodeURIComponent(`Hello,\n\nHere is the updated learning story map completed today:\n\n${compiledText}\n\nSent via Story Planner Pro.`);
-            window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        }
-
-        function getPlainTextStory() {
+        function saveActiveStory() {
+            const titleInput = document.getElementById('active-story-title');
+            const title = titleInput.value.trim() || `Untitled Narrative Report (${new Date().toLocaleDateString()})`;
+            
             const lines = [];
-            for(let i=0; i<5; i++) {
-                const txt = document.getElementById(`p-step-${i}`).innerText;
-                if(!txt.includes("tracker unselected") && !txt.includes("missing")) lines.push(txt);
-            }
+            channels.forEach(ch => {
+                const act = DB.active_selections[ch];
+                if(act.frame || act.word) lines.push(`${act.frame} ${act.word || '...'}.`);
+            });
+
             if(lines.length === 0) {
-                alert("Please build an active workspace story profile map before trying to export data.");
-                return null;
+                alert("Cannot save an empty story asset framework.");
+                return;
             }
-            return lines.join("\n");
-        }
 
-        // Device On-Memory Local Storage Historical Logging Portfolio System
-        function saveAndCommitToPortfolio() {
-            const textSummary = getPlainTextStory();
-            if(!textSummary) return;
-
-            const historicalManifest = JSON.parse(localStorage.getItem('story_mvp_portfolio') || '[]');
-            const entry = {
+            const storyObj = {
                 id: Date.now(),
-                timestamp: new Date().toLocaleString(),
-                type: storyType,
-                mode: ageMode,
-                content: textSummary.replace(/\n/g, ' ')
+                title: title,
+                content: lines.join(" "),
+                timestamp: new Date().toLocaleString()
             };
 
-            historicalManifest.unshift(entry); // Append onto top position
-            localStorage.setItem('story_mvp_portfolio', JSON.stringify(historicalManifest));
-            confetti({ particleCount: 40, spread: 30 });
-            loadLocalStoragePortfolioDisplay();
+            DB.stories.unshift(storyObj);
+            titleInput.value = "";
+            
+            // Clear current working draft selections
+            channels.forEach(ch => { DB.active_selections[ch] = { frame:'', word:'' }; });
+            saveDB();
+            
+            alert("✨ Story successfully written and archived into My Stories Portfolio!");
+            renderAccordionCanvas();
         }
 
-        function loadLocalStoragePortfolioDisplay() {
-            const container = document.getElementById('history-portfolio-output');
-            const historicalManifest = JSON.parse(localStorage.getItem('story_mvp_portfolio') || '[]');
+        // ==========================================
+        // MODULE 2: GRAPHIC ORGANIZERS STORAGE
+        // ==========================================
+        function renderOrganizersCanvas() {
+            const listWho = document.getElementById('go-list-who');
+            const listWhere = document.getElementById('go-list-where');
             
-            if(historicalManifest.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 italic py-2">No historical documents currently logged inside local device sandbox memory profiles.</p>`;
+            const cardsWho = DB.organizers.filter(o => o.type === 'who');
+            const cardsWhere = DB.organizers.filter(o => o.type === 'where');
+
+            const template = (c) => `
+                <div class="p-2 border rounded-xl flex items-center justify-between bg-slate-50 gap-2">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        ${c.img ? `<img src="${c.img}" class="w-10 h-10 object-cover rounded-lg shadow-sm flex-shrink-0" />` : `<div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center text-xs flex-shrink-0">📁</div>`}
+                        <span class="text-xs font-bold truncate">${c.name}</span>
+                    </div>
+                    <button onclick="deleteOrganizerAsset(${c.id})" class="text-red-400 hover:text-red-600 text-xs px-1">✕</button>
+                </div>
+            `;
+
+            listWho.innerHTML = cardsWho.length ? cardsWho.map(template).join('') : `<p class="text-xs text-slate-400 italic">No custom profile character entries added yet.</p>`;
+            listWhere.innerHTML = cardsWhere.length ? cardsWhere.map(template).join('') : `<p class="text-xs text-slate-400 italic">No custom location settings added yet.</p>`;
+        }
+
+        function addGraphicOrganizerAsset() {
+            const type = document.getElementById('go-input-type').value;
+            const name = document.getElementById('go-input-name').value.trim();
+            const fileInput = document.getElementById('go-input-file');
+
+            if(!name) { alert("Please input a text character or setting name identifier."); return; }
+
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    const asset = { id: Date.now(), type, name, img: reader.result };
+                    DB.organizers.push(asset);
+                    saveDB();
+                    finalizeOrganizerInsertionReset(fileInput);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                const asset = { id: Date.now(), type, name, img: null };
+                DB.organizers.push(asset);
+                saveDB();
+                finalizeOrganizerInsertionReset(fileInput);
+            }
+        }
+
+        function finalizeOrganizerInsertionReset(fileInput) {
+            document.getElementById('go-input-name').value = "";
+            fileInput.value = "";
+            renderOrganizersCanvas();
+        }
+
+        function deleteOrganizerAsset(id) {
+            DB.organizers = DB.organizers.filter(o => o.id !== id);
+            saveDB();
+            renderOrganizersCanvas();
+        }
+
+        // ==========================================
+        // MODULE 3: CUSTOM CONFIG hubs (SENTENCES & WORDBANKS)
+        // ==========================================
+        function renderFramesConfigCanvas() {
+            const grid = document.getElementById('frames-config-grid');
+            grid.innerHTML = channels.map(ch => {
+                const arr = DB.sentence_frames[ch] || [];
+                return `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-3">
+                        <h3 class="font-bold uppercase text-sm border-b pb-1 flex justify-between items-center text-slate-700">
+                            <span>💬 Component: ${ch}</span>
+                            <span class="text-xs font-normal text-slate-400">Total: ${arr.length}</span>
+                        </h3>
+                        <div class="space-y-1 max-h-36 overflow-y-auto">
+                            ${arr.map((f, i) => `
+                                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-lg border">
+                                    <span class="truncate font-semibold">${f}</span>
+                                    <button onclick="deleteFrameEntry('${ch}', ${i})" class="text-red-400 hover:text-red-600 ml-2">✕</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <input type="text" id="input-frame-${ch}" placeholder="Type a new sentence starter..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs" />
+                            <button onclick="addFrameEntry('${ch}')" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs rounded-xl">Add</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addFrameEntry(ch) {
+            const input = document.getElementById(`input-frame-${ch}`);
+            const val = input.value.trim();
+            if(!val) return;
+            if(!DB.sentence_frames[ch]) DB.sentence_frames[ch] = [];
+            DB.sentence_frames[ch].push(val);
+            saveDB();
+            input.value = "";
+            renderFramesConfigCanvas();
+        }
+
+        function deleteFrameEntry(ch, idx) {
+            DB.sentence_frames[ch].splice(idx, 1);
+            saveDB();
+            renderFramesConfigCanvas();
+        }
+
+        function renderWordBanksConfigCanvas() {
+            const grid = document.getElementById('wordbanks-config-grid');
+            grid.innerHTML = channels.map(ch => {
+                const data = DB.word_banks[ch];
+                return `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-3">
+                        <div class="flex justify-between items-center border-b pb-1">
+                            <h3 class="font-bold uppercase text-sm text-slate-700">🎯 Wordbank: ${ch}</h3>
+                            <div class="flex items-center gap-2">
+                                <label class="text-[10px] uppercase font-bold text-slate-400">Accent:</label>
+                                <input type="color" value="${data.color}" onchange="updateWordBankColor('${ch}', this.value)" class="w-6 h-6 border rounded cursor-pointer" />
+                            </div>
+                        </div>
+                        <div class="space-y-1 max-h-36 overflow-y-auto">
+                            ${data.words.map((w, i) => `
+                                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-lg border" style="border-left-width: 4px; border-left-color: ${data.color}">
+                                    <span class="truncate font-semibold">${w}</span>
+                                    <button onclick="deleteWordBankEntry('${ch}', ${i})" class="text-red-400 hover:text-red-600 ml-2">✕</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <input type="text" id="input-word-${ch}" placeholder="Type a new target vocabulary item..." class="flex-1 px-3 py-1.5 border rounded-xl text-xs" />
+                            <button onclick="addWordBankEntry('${ch}')" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs rounded-xl">Add</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateWordBankColor(ch, hex) {
+            DB.word_banks[ch].color = hex;
+            saveDB();
+            renderWordBanksConfigCanvas();
+        }
+
+        function addWordBankEntry(ch) {
+            const input = document.getElementById(`input-word-${ch}`);
+            const val = input.value.trim();
+            if(!val) return;
+            DB.word_banks[ch].words.push(val);
+            saveDB();
+            input.value = "";
+            renderWordBanksConfigCanvas();
+        }
+
+        function deleteWordBankEntry(ch, idx) {
+            DB.word_banks[ch].words.splice(idx, 1);
+            saveDB();
+            renderWordBanksConfigCanvas();
+        }
+
+        // ==========================================
+        // MODULE 4: MY STORIES ARCHIVE PORTFOLIO
+        // ==========================================
+        function renderStoriesPortfolioCanvas() {
+            const container = document.getElementById('saved-stories-container');
+            if(!DB.stories || DB.stories.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl shadow-sm text-center text-slate-400 italic">No historically logged narrative reports compiled into portfolio timelines yet.</div>`;
                 return;
             }
 
-            container.innerHTML = historicalManifest.map(item => `
-                <div class="p-3 rounded-lg border text-xs leading-relaxed ${ageMode === 'kid' ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-700/50 border-slate-600 text-slate-300'}">
-                    <div class="flex justify-between font-bold text-[10px] uppercase opacity-60 mb-1">
-                        <span>📅 ${item.timestamp}</span>
-                        <span>Track: ${item.type} (${item.mode})</span>
+            container.innerHTML = DB.stories.map(st => `
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between md:flex-row items-start md:items-center gap-4">
+                    <div class="space-y-1 flex-1">
+                        <div class="flex items-center gap-3">
+                            <h4 class="font-bold text-lg text-slate-800">${st.title}</h4>
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold">🕒 ${st.timestamp}</span>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed font-medium">${st.content}</p>
                     </div>
-                    <p>${item.content}</p>
+                    <div class="flex gap-2 no-print self-end md:self-center">
+                        <button onclick="loadStoryToActiveWorkspace(${st.id})" class="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-xl text-xs font-bold transition-all">✏️ Edit</button>
+                        <button onclick="deleteStoryFromPortfolio(${st.id})" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-xl text-xs font-bold transition-all">✕ Delete</button>
+                    </div>
                 </div>
             `).join('');
         }
 
-        function clearAllDeviceHistory() {
-            if(confirm("Confirm action: Clear all historically archived entries inside this local browser profile data sandbox?")) {
-                localStorage.removeItem('story_mvp_portfolio');
-                loadLocalStoragePortfolioDisplay();
+        function loadStoryToActiveWorkspace(id) {
+            const target = DB.stories.find(st => st.id === id);
+            if(!target) return;
+            
+            // Complex text metrics parse approximation logic for simple draft editing extraction
+            alert("This operation will load your archived narrative text block directly into the live viewer panel sheet for reading and print outputs.");
+            document.getElementById('live-text-composite').innerText = target.content;
+            document.getElementById('live-text-composite').className = "space-y-2 text-lg leading-relaxed text-slate-800 font-semibold";
+            document.getElementById('active-story-title').value = target.title;
+            switchView('create');
+        }
+
+        function deleteStoryFromPortfolio(id) {
+            if(confirm("Confirm removal: Permanently remove this narrative report log from local storage portfolio memory?")) {
+                DB.stories = DB.stories.filter(st => st.id !== id);
+                saveDB();
+                renderStoriesPortfolioCanvas();
             }
         }
 
-        function resetApp() {
-            currentStep = 0;
-            sessionAnswers = Array(5).fill(null).map(() => ({ frame: '', word: '' }));
-            for(let i=0; i<5; i++) {
-                const targetP = document.getElementById(`p-step-${i}`);
-                targetP.innerHTML = `<span class="text-slate-400 text-xs block italic">${definitions[storyType].labels[i]} tracker unselected...</span>`;
-                targetP.className = "p-2 rounded-lg bg-slate-50 border border-transparent min-h-[40px]";
-            }
-            renderWorkspace();
+        // ==========================================
+        // MODULE 5: SYSTEM ACCESSIBILITY SETTINGS
+        // ==========================================
+        function loadSettingsConfigurationPanel() {
+            document.getElementById('settings-theme').value = DB.preferences.theme || 'sky';
+            document.getElementById('settings-font').value = DB.preferences.font || 'font-fredoka';
+            populateSpeechSynthesisVoiceDropdown();
         }
 
-        // Initialize Core Engine Lifecycles
-        updateLabels();
-        renderWorkspace();
-        loadLocalStoragePortfolioDisplay();
+        function applySystemTheme(theme) {
+            DB.preferences.theme = theme;
+            saveDB();
+            const body = document.getElementById('app-body');
+            
+            if(theme === 'slate') {
+                body.className = "bg-slate-950 text-slate-100 min-h-screen transition-colors duration-300 " + DB.preferences.font;
+            } else if(theme === 'lavender') {
+                body.className = "bg-purple-50 text-slate-800 min-h-screen transition-colors duration-300 " + DB.preferences.font;
+            } else {
+                body.className = "bg-sky-50 text-slate-800 min-h-screen transition-colors duration-300 " + DB.preferences.font;
+            }
+        }
+
+        function applySystemFont(fontClass) {
+            DB.preferences.font = fontClass;
+            saveDB();
+            
+            // Strip structural target class attributes
+            const body = document.getElementById('app-body');
+            body.classList.remove('font-fredoka', 'font-inter', 'font-dyslexic');
+            body.classList.add(fontClass);
+        }
+
+        function populateSpeechSynthesisVoiceDropdown() {
+            const dropdown = document.getElementById('settings-voice');
+            if(!window.speechSynthesis) return;
+
+            const voices = window.speechSynthesis.getVoices();
+            dropdown.innerHTML = voices.map(v => `
+                <option value="${v.voiceURI}" ${DB.preferences.voiceURI === v.voiceURI ? 'selected' : ''}>${v.name} (${v.lang})</option>
+            `).join('');
+        }
+
+        // Execute background browser hardware synthesize hook checks
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                if(!document.getElementById('view-settings').classList.contains('hidden')) {
+                    populateSpeechSynthesisVoiceDropdown();
+                }
+            };
+        }
+
+        function speakText() {
+            const liveTxt = document.getElementById('live-text-composite').innerText;
+            if(liveTxt.includes("Paragraph text will render")) { alert("Workspace context is empty."); return; }
+            
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(liveTxt);
+            
+            const selectedVoiceURI = document.getElementById('settings-voice')?.value;
+            if(selectedVoiceURI) {
+                const voice = window.speechSynthesis.getVoices().find(v => v.voiceURI === selectedVoiceURI);
+                if(voice) utterance.voice = voice;
+            }
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Backup Configuration Systems (JSON Import/Export Data Management Channels)
+        function exportSystemConfiguration() {
+            const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `msb_configuration_backup_${Date.now()}.json`;
+            a.click();
+        }
+
+        function importSystemConfigurationPrompt() {
+            const fileStringInput = prompt("Paste your raw exported JSON configuration data manifest string package text layer inside this window slot directly:");
+            if(!fileStringInput) return;
+            try {
+                const parsed = JSON.parse(fileStringInput);
+                if(parsed.sentence_frames && parsed.word_banks) {
+                    DB = parsed;
+                    saveDB();
+                    alert("✨ Profile system configurations updated successfully!");
+                    window.location.reload();
+                } else {
+                    alert("Validation fault: Missing required internal structural criteria data keys inside JSON manifest packet.");
+                }
+            } catch (err) {
+                alert("Error compilation fail: Input text package does not conform to valid standardized structural code profiles.");
+            }
+        }
+
+        // App Initialization Sequence Trigger Loop
+        applySystemFont(DB.preferences.font);
+        applySystemTheme(DB.preferences.theme);
+        renderAccordionCanvas();
     </script>
 </body>
 </html>
