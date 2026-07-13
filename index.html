@@ -19,8 +19,12 @@
         .accordion-content { transition: max-height 0.25s ease-out; max-height: 0; overflow: hidden; }
         .accordion-content.open { max-height: 1200px; padding: 1.25rem; }
         
-        /* Highlight text areas ready for immediate user modification */
         [contenteditable="true"]:focus { outline: 2px solid #3b82f6; background-color: #f8fafc; border-radius: 0.375rem; padding: 0 0.25rem; }
+
+        @media print {
+            .no-print { display: none !important; }
+            .print-card { border: none !important; box-shadow: none !important; background: white !important; color: black !important; width: 100% !important; max-width: 100% !important; }
+        }
     </style>
 </head>
 <body id="app-body" class="bg-slate-50 text-slate-800 min-h-screen font-inter transition-colors duration-300">
@@ -33,38 +37,44 @@
                     <h1 class="text-xl font-semibold text-slate-900 tracking-tight">My Story Builder</h1>
                     <p class="text-xs text-slate-400 mt-0.5">Clinical & Educational Scaffolding</p>
                 </div>
+
+                <!-- High-Level Mode Selector Tool Toggle -->
+                <div class="bg-slate-100 p-1 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
+                    <button onclick="setAppTargetMode('social')" id="mode-btn-social" class="py-2 rounded-lg text-center transition-all bg-white text-slate-900 shadow-sm">Social Story</button>
+                    <button onclick="setAppTargetMode('literature')" id="mode-btn-literature" class="py-2 rounded-lg text-center transition-all text-slate-500 hover:text-slate-900">Literature</button>
+                </div>
                 
                 <nav class="space-y-1">
                     <button onclick="switchView('create')" id="nav-create" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all bg-slate-900 text-white shadow-sm">Create Story</button>
                     <button onclick="switchView('organizers')" id="nav-organizers" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50">Graphic Organizers</button>
                     
-                    <!-- Sentence Frames Navigation Header -->
+                    <!-- Sentence Frames Navigation Subfolder -->
                     <div class="space-y-0.5">
                         <button onclick="toggleSubnav('subnav-frames')" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
                             <span>Sentence Frames</span>
                             <span id="arrow-subnav-frames" class="text-[9px] text-slate-400">▶</span>
                         </button>
                         <div id="subnav-frames" class="subnav-menu pl-4 space-y-0.5">
-                            <button onclick="switchView('frames-who')" id="nav-frames-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Who Starters</button>
-                            <button onclick="switchView('frames-where')" id="nav-frames-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Where Starters</button>
-                            <button onclick="switchView('frames-what')" id="nav-frames-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">What Starters</button>
-                            <button onclick="switchView('frames-why')" id="nav-frames-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Why Starters</button>
-                            <button onclick="switchView('frames-reflection')" id="nav-frames-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Reflection Starters</button>
+                            <button onclick="switchView('frames-who')" id="nav-frames-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-who">Who</span> Starters</button>
+                            <button onclick="switchView('frames-where')" id="nav-frames-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-where">Where</span> Starters</button>
+                            <button onclick="switchView('frames-what')" id="nav-frames-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-what">What</span> Starters</button>
+                            <button onclick="switchView('frames-why')" id="nav-frames-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-why">Why</span> Starters</button>
+                            <button onclick="switchView('frames-reflection')" id="nav-frames-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-reflection">Reflection</span> Starters</button>
                         </div>
                     </div>
 
-                    <!-- Word Banks Navigation Header -->
+                    <!-- Word Banks Navigation Subfolder -->
                     <div class="space-y-0.5">
                         <button onclick="toggleSubnav('subnav-wordbanks')" class="w-full text-left px-3 py-2 rounded-xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 flex justify-between items-center">
                             <span>Word Banks</span>
                             <span id="arrow-subnav-wordbanks" class="text-[9px] text-slate-400">▶</span>
                         </button>
                         <div id="subnav-wordbanks" class="subnav-menu pl-4 space-y-0.5">
-                            <button onclick="switchView('wordbanks-who')" id="nav-wordbanks-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Who Vocabulary</button>
-                            <button onclick="switchView('wordbanks-where')" id="nav-wordbanks-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Where Vocabulary</button>
-                            <button onclick="switchView('wordbanks-what')" id="nav-wordbanks-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">What Vocabulary</button>
-                            <button onclick="switchView('wordbanks-why')" id="nav-wordbanks-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Why Vocabulary</button>
-                            <button onclick="switchView('wordbanks-reflection')" id="nav-wordbanks-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50">Reflection Vocabulary</button>
+                            <button onclick="switchView('wordbanks-who')" id="nav-wordbanks-who" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-who">Who</span> Vocabulary</button>
+                            <button onclick="switchView('wordbanks-where')" id="nav-wordbanks-where" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-where">Where</span> Vocabulary</button>
+                            <button onclick="switchView('wordbanks-what')" id="nav-wordbanks-what" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-what">What</span> Vocabulary</button>
+                            <button onclick="switchView('wordbanks-why')" id="nav-wordbanks-why" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-why">Why</span> Vocabulary</button>
+                            <button onclick="switchView('wordbanks-reflection')" id="nav-wordbanks-reflection" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:bg-slate-50"><span class="ch-lbl-reflection">Reflection</span> Vocabulary</button>
                         </div>
                     </div>
 
@@ -76,14 +86,14 @@
             </div>
         </aside>
 
-        <!-- Primary Main Workspace Frame -->
+        <!-- Primary Main Workspace Panel Layout Shell -->
         <main class="flex-1 p-5 md:p-8 overflow-y-auto">
             
-            <!-- SECTION 1: CREATE MAIN WORKING VIEW -->
+            <!-- SECTION 1: CREATE COMPOSITE STORY VIEW WORKING CANVAS -->
             <section id="view-create" class="view-panel space-y-6">
                 <div class="border-b border-slate-200 pb-3">
-                    <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">Workspace Editor</h2>
-                    <p class="text-sm text-slate-500">Construct narratives step-by-step using structural accordion layers.</p>
+                    <h2 id="create-view-main-header" class="text-2xl font-semibold text-slate-900 tracking-tight">Social Story Creator</h2>
+                    <p id="create-view-sub-header" class="text-sm text-slate-500">Map out details about your day with guided accordion prompts.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -96,21 +106,27 @@
                         </div>
                     </div>
 
-                    <!-- Right Composite Output View Card -->
+                    <!-- Right Unified Story Sheet Node Panel Container -->
                     <div class="lg:col-span-1">
                         <div id="compiled-paragraph-card" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[460px] flex flex-col justify-between">
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                                    <h3 class="text-md font-semibold text-slate-900">Live Transcript Sheet</h3>
+                                    <h3 class="text-md font-semibold text-slate-900">My Story</h3>
                                     <button onclick="speakActiveText()" class="no-print px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-medium rounded-lg border border-slate-200">Speak</button>
                                 </div>
-                                <div id="live-text-composite" class="space-y-2 text-base leading-relaxed text-slate-400 italic">
-                                    Select targets from the workspace blocks to populate your custom paragraph summary manifest data...
+                                
+                                <!-- Relocated Title Input Node Positioned Prior to Actual Text Readouts -->
+                                <div class="no-print space-y-1">
+                                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Story Title</label>
+                                    <input type="text" id="active-story-title" placeholder="Give your story a title..." class="w-full px-3 py-1.5 border border-slate-200 rounded-xl text-xs font-semibold bg-slate-50 text-slate-800 focus:outline-blue-400" />
+                                </div>
+
+                                <div id="live-text-composite" class="space-y-2 text-base leading-relaxed text-slate-400 italic pt-2">
+                                    Select options from the sections on the left to start building your story layout...
                                 </div>
                             </div>
                             <div class="mt-6 pt-4 border-t border-slate-100 space-y-2 no-print">
-                                <input type="text" id="active-story-title" placeholder="Assign custom record name..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-medium bg-slate-50" />
-                                <button onclick="saveActiveStory()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl text-xs shadow-sm transition-all">Archive Document Profile</button>
+                                <button onclick="saveActiveStory()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl text-xs shadow-sm transition-all">Save Story</button>
                                 <button onclick="window.print()" class="w-full py-1.5 bg-slate-100 text-slate-600 text-xs font-medium rounded-lg">Print Document</button>
                             </div>
                         </div>
@@ -130,13 +146,13 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-500 mb-1">Structural Category Target</label>
                             <select id="go-input-type" class="w-full px-3 py-1.5 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium">
-                                <option value="who">Character / Person (Who)</option>
-                                <option value="where">Location / Setting (Where)</option>
+                                <option value="who" id="opt-go-who">Character / Person (Who)</option>
+                                <option value="where" id="opt-go-where">Location / Setting (Where)</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-500 mb-1">Asset Identity Text</label>
-                            <input type="text" id="go-input-name" placeholder="e.g., Doctor, Playground" class="w-full px-3 py-1.5 border border-slate-200 rounded-xl text-xs bg-slate-50" />
+                            <input type="text" id="go-input-name" placeholder="e.g., Main Character, School Yard" class="w-full px-3 py-1.5 border border-slate-200 rounded-xl text-xs bg-slate-50" />
                         </div>
                     </div>
                     <div>
@@ -146,8 +162,8 @@
                     <button onclick="addGraphicOrganizerAsset()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl text-xs shadow-sm">Save Asset Card</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200"><h4 class="font-semibold border-b pb-1.5 mb-3 text-slate-900 text-xs uppercase tracking-wider">Characters (Who)</h4><div id="go-list-who" class="grid grid-cols-2 gap-2"></div></div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200"><h4 class="font-semibold border-b pb-1.5 mb-3 text-slate-900 text-xs uppercase tracking-wider">Places (Where)</h4><div id="go-list-where" class="grid grid-cols-2 gap-2"></div></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200"><h4 class="font-semibold border-b pb-1.5 mb-3 text-slate-900 text-xs uppercase tracking-wider ch-lbl-who">Who</h4><div id="go-list-who" class="grid grid-cols-2 gap-2"></div></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200"><h4 class="font-semibold border-b pb-1.5 mb-3 text-slate-900 text-xs uppercase tracking-wider ch-lbl-where">Where</h4><div id="go-list-where" class="grid grid-cols-2 gap-2"></div></div>
                 </div>
             </section>
 
@@ -160,7 +176,6 @@
                     </div>
                 </div>
 
-                <!-- Unified Favorites Module Hook Header -->
                 <div class="bg-white p-4 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50/40 to-indigo-50/20 space-y-2">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-blue-800 flex items-center gap-1.5">Starred Core Favorites</h3>
                     <div id="frames-favorites-bucket" class="flex flex-wrap gap-2 text-xs"></div>
@@ -169,7 +184,7 @@
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 max-w-xl space-y-3">
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Instantiate New Sentence Frame Collection</h3>
                     <div class="flex gap-2">
-                        <input type="text" id="new-frameset-label" placeholder="e.g., Literature Log Frames, Morning Checkin" class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium" />
+                        <input type="text" id="new-frameset-label" placeholder="e.g., Chapter 4 Frameworks, Daily Journal" class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium" />
                         <button onclick="createNewSentenceFrameCollection()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded-xl shadow-sm">Create Folder</button>
                     </div>
                 </div>
@@ -184,12 +199,12 @@
             <section id="view-wordbanks-container" class="view-panel hidden space-y-6">
                 <div class="border-b border-slate-200 pb-3">
                     <h2 id="wordbanks-page-title" class="text-2xl font-semibold tracking-tight text-slate-900">Word Banks Studio</h2>
-                    <p class="text-sm text-slate-500">Manage multiple structured sets. Click items directly to edit spelling layouts immediately.</p>
+                    <p class="text-sm text-slate-500">Blended tracking lists feature user-selected color codings.</p>
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 max-w-xl space-y-3">
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Instantiate New Named Word Bank Set</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <input type="text" id="new-wordbank-label" placeholder="e.g., Core Adjectives, Action Verbs" class="sm:col-span-2 px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium" />
+                        <input type="text" id="new-wordbank-label" placeholder="e.g., Adjectives, Story Archetypes" class="sm:col-span-2 px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50 font-medium" />
                         <div class="flex items-center gap-2">
                             <label class="text-[10px] font-bold text-slate-400 uppercase">Accent Color</label>
                             <input type="color" id="new-wordbank-color" value="#4f46e5" class="w-full h-8 border rounded-lg cursor-pointer bg-transparent" />
@@ -207,24 +222,24 @@
             <!-- SECTION 5: STORIES ARCHIVE PORTFOLIO LOG -->
             <section id="view-stories" class="view-panel hidden space-y-6">
                 <div>
-                    <h2 class="text-2xl font-semibold tracking-tight text-slate-900">Saved Stories Archive</h2>
-                    <p class="text-sm text-slate-500">Review portfolio items cached on this system's data partitions.</p>
+                    <h2 class="text-2xl font-semibold tracking-tight text-slate-900">Saved Stories</h2>
+                    <p class="text-sm text-slate-500">Review or print previously built social or literature entries. Click directly into titles to rename them.</p>
                 </div>
                 <div id="saved-stories-container" class="space-y-4"></div>
             </section>
 
-            <!-- SECTION 6: THEMES AND VOICES ADJUSTMENT PANEL -->
+            <!-- SECTION 6: SYSTEM PREFERENCES PANEL -->
             <section id="view-settings" class="view-panel hidden space-y-6">
                 <div>
                     <h2 class="text-2xl font-semibold tracking-tight text-slate-900">System Preferences</h2>
-                    <p class="text-sm text-slate-500">Modify typography properties, palette interfaces, and sound outputs.</p>
+                    <p class="text-sm text-slate-500">Modify typography properties, palette interfaces, and voice outputs.</p>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm max-w-xl border border-slate-200 space-y-5">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Visual UI Themes Profile Canvas</label>
                         <select id="settings-theme" onchange="applySystemTheme(this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-medium">
-                            <option value="sky">Classic Sky Blue Canvas Profile</option>
                             <option value="slate">Minimalist Crisp Corporate Slate</option>
+                            <option value="sky">Classic Sky Blue Canvas Profile</option>
                             <option value="lavender">Calm Clinical Amethyst Lavender</option>
                             <option value="mint">Fresh Sage Botanical Mint</option>
                             <option value="sunflower">High Contrast Technical Sunflower Amber</option>
@@ -257,24 +272,31 @@
         const activeChannels = ["who", "where", "what", "why", "reflection"];
         let activeRouteChannelTarget = null; 
         let openWorkspaceAccordion = null; 
-        
-        // Tracks expansion states of config collections. Folders collapse by default unless targeted.
         let collapsedConfigFolders = {}; 
+
+        // Top Level Modality Application State Indicator Matrix
+        let currentTargetMode = 'social'; // 'social' (Daily Review) or 'literature' (Comprehension mapping)
+
+        // Labels mapping structural configurations across dual modalities
+        const modeLabels = {
+            social: { who: "Who", where: "Where", what: "What", why: "Why", reflection: "Reflection", title: "Social Story Creator", sub: "Map out details about your day with guided accordion prompts." },
+            literature: { who: "Characters", where: "Setting", what: "Plot Event", why: "Theme / Motive", reflection: "Book Review", title: "Literature Comprehension Mapper", sub: "Convert abstract reading narratives into structured concrete visual components." }
+        };
 
         const defaultAppStructureDatabasePayload = {
             sentence_frames: {
-                who: [{ id: 'sf-who-default', label: 'General Starters', items: [{ text: "Today, I spent time with", starred: true }, { text: "Our main team group included", starred: false }] }],
-                where: [{ id: 'sf-where-default', label: 'General Starters', items: [{ text: "We completed tasks at the", starred: false }, { text: "I executed work inside the", starred: false }] }],
-                what: [{ id: 'sf-what-default', label: 'General Starters', items: [{ text: "The main assignment done was", starred: false }, { text: "I spent time processing", starred: false }] }],
-                why: [{ id: 'sf-why-default', label: 'General Starters', items: [{ text: "This was necessary because", starred: false }, { text: "I did this task to build", starred: false }] }],
-                reflection: [{ id: 'sf-refl-default', label: 'General Starters', items: [{ text: "My view of it was that it felt", starred: false }, { text: "Looking back, I thought it was", starred: false }] }]
+                who: [{ id: 'sf-who-default', label: 'Social: People seen', items: [{ text: "Today, I spent time with", starred: true }] }, { id: 'sf-who-lit', label: 'Lit: Protagonists', items: [{ text: "The central characters featured in this chapter are", starred: false }] }],
+                where: [{ id: 'sf-where-default', label: 'Social: Setting', items: [{ text: "We completed tasks at the", starred: false }] }, { id: 'sf-where-lit', label: 'Lit: Environment', items: [{ text: "The story layout takes place inside a", starred: false }] }],
+                what: [{ id: 'sf-what-default', label: 'Social: Actions', items: [{ text: "The main assignment done was", starred: false }] }, { id: 'sf-what-lit', label: 'Lit: Narrative Conflict', items: [{ text: "A major event occurs when characters decide to", starred: false }] }],
+                why: [{ id: 'sf-why-default', label: 'Social: Objectives', items: [{ text: "This was necessary because", starred: false }] }, { id: 'sf-why-lit', label: 'Lit: Core Motivation', items: [{ text: "The character makes this choice because they want to", starred: false }] }],
+                reflection: [{ id: 'sf-refl-default', label: 'Social: Self Review', items: [{ text: "My view of it was that it felt", starred: false }] }, { id: 'sf-refl-lit', label: 'Lit: Critical Review', items: [{ text: "My analytical evaluation of this storyline is that it was", starred: false }] }]
             },
             word_banks: {
-                who: [{ id: 'wb-who-default', label: 'Family Members', color: '#475569', items: ["Mom and Dad", "Classmates", "Instructional Teacher"] }],
-                where: [{ id: 'wb-where-default', label: 'Campus Locations', color: '#2563eb', items: ["The Playground", "Media Lab Library", "Cafeteria"] }],
-                what: [{ id: 'wb-what-default', label: 'Core Activities', color: '#059669', items: ["Painting a Canvas", "Reading a Chapter", "Practicing Math"] }],
-                why: [{ id: 'wb-why-default', label: 'IEP Objective Targets', color: '#db2777', items: ["Growing Independence", "Learning New Facts", "Schedule Routines"] }],
-                reflection: [{ id: 'wb-refl-default', label: 'Evaluations', color: '#7c3aed', items: ["Successful and Fun", "Calm and Focused", "Demanding Extra Effort"] }]
+                who: [{ id: 'wb-who-default', label: 'Social Context', color: '#b45309', items: ["Mom and Dad", "Classmates", "Instructional Teacher"] }, { id: 'wb-who-lit', label: 'Literary Archetypes', color: '#1e3a8a', items: ["A brave protagonist", "An unreliable narrator", "The mythical hero"] }],
+                where: [{ id: 'wb-where-default', label: 'Campus Locations', color: '#2563eb', items: ["The Playground", "Media Lab Library", "Cafeteria"] }, { id: 'wb-where-lit', label: 'Story Settings', color: '#0369a1', items: ["An isolated country farm", "A dense dystopian metropolis", "A hidden enchanted forest"] }],
+                what: [{ id: 'wb-what-default', label: 'Daily Events', color: '#059669', items: ["Painting a Canvas", "Reading a Chapter", "Practicing Math"] }, { id: 'wb-what-lit', label: 'Plot Developments', color: '#065f46', items: ["Solving a complex mystery", "Going on an unexpected journey", "Discovering a secret map"] }],
+                why: [{ id: 'wb-why-default', label: 'IEP Parameters', color: '#db2777', items: ["Growing Independence", "Learning New Facts", "Schedule Routines"] }, { id: 'wb-why-lit', label: 'Thematic Lessons', color: '#9d174d', items: ["To protect their friends", "To seek truth and knowledge", "To stand up for community rights"] }],
+                reflection: [{ id: 'wb-refl-default', label: 'Personal Metrics', color: '#7c3aed', items: ["Successful and Fun", "Calm and Focused", "Demanding Extra Effort"] }, { id: 'wb-refl-lit', label: 'Story Assessments', color: '#5b21b6', items: ["Deeply engaging and rewarding", "Predictable but well-paced", "Overly complex or confusing"] }]
             },
             organizers: [],
             stories: [],
@@ -283,10 +305,60 @@
             preferences: { theme: 'slate', font: 'font-inter', voiceURI: '' }
         };
 
-        let DB = JSON.parse(localStorage.getItem('msb_v4_professional_db')) || defaultAppStructureDatabasePayload;
+        let DB = JSON.parse(localStorage.getItem('msb_v5_integrated_db')) || defaultAppStructureDatabasePayload;
 
-        function commitLocalStorage() {
-            localStorage.setItem('msb_v4_professional_db', JSON.stringify(DB));
+        function commitLocalStorage() { localStorage.setItem('msb_v5_integrated_db', JSON.stringify(DB)); }
+
+        // Core App Target Modality Linker Controller Routine
+        function setAppTargetMode(mode) {
+            currentTargetMode = mode;
+            
+            const btnSocial = document.getElementById('mode-btn-social');
+            const btnLiterature = document.getElementById('mode-btn-literature');
+            
+            if(mode === 'literature') {
+                btnLiterature.className = "py-2 rounded-lg text-center transition-all bg-white text-slate-900 shadow-sm";
+                btnSocial.className = "py-2 rounded-lg text-center transition-all text-slate-500 hover:text-slate-900";
+                
+                // Automatically auto-assign config drop down pointers to standard linked ELA blocks
+                activeChannels.forEach(ch => {
+                    const lFrame = DB.sentence_frames[ch].find(f => f.id.endsWith('-lit')) || DB.sentence_frames[ch][0];
+                    const lBank = DB.word_banks[ch].find(b => b.id.endsWith('-lit')) || DB.word_banks[ch][0];
+                    if(lFrame) DB.active_config_pointers[ch].frameId = lFrame.id;
+                    if(lBank) DB.active_config_pointers[ch].bankId = lBank.id;
+                });
+            } else {
+                btnSocial.className = "py-2 rounded-lg text-center transition-all bg-white text-slate-900 shadow-sm";
+                btnLiterature.className = "py-2 rounded-lg text-center transition-all text-slate-500 hover:text-slate-900";
+                
+                activeChannels.forEach(ch => {
+                    const sFrame = DB.sentence_frames[ch].find(f => !f.id.endsWith('-lit')) || DB.sentence_frames[ch][0];
+                    const sBank = DB.word_banks[ch].find(b => !b.id.endsWith('-lit')) || DB.word_banks[ch][0];
+                    if(sFrame) DB.active_config_pointers[ch].frameId = sFrame.id;
+                    if(sBank) DB.active_config_pointers[ch].bankId = sBank.id;
+                });
+            }
+            
+            // Clean working canvas selections across structural updates
+            activeChannels.forEach(ch => { DB.active_selections[ch] = { frame:'', word:'' }; });
+            commitLocalStorage();
+            updateLabelStringsAcrossInterfaceProfiles();
+            switchView('create');
+        }
+
+        function updateLabelStringsAcrossInterfaceProfiles() {
+            const lblMap = modeLabels[currentTargetMode];
+            document.getElementById('create-view-main-header').innerText = lblMap.title;
+            document.getElementById('create-view-sub-header').innerText = lblMap.sub;
+            
+            // Map labels into navigation folders and list structures
+            activeChannels.forEach(ch => {
+                document.querySelectorAll(`.ch-lbl-${ch}`).forEach(el => el.innerText = lblMap[ch]);
+            });
+
+            // Update custom selection lists types drop options targets fields
+            document.getElementById('opt-go-who').innerText = `${lblMap.who} asset item selection`;
+            document.getElementById('opt-go-where').innerText = `${lblMap.where} asset item selection`;
         }
 
         function switchView(target) {
@@ -298,7 +370,7 @@
             if(target.startsWith('frames-')) {
                 activeRouteChannelTarget = target.split('-')[1];
                 document.getElementById('view-frames-container').classList.remove('hidden');
-                document.getElementById('frames-page-title').innerText = `Sentence Frames: ${activeRouteChannelTarget.toUpperCase()}`;
+                document.getElementById('frames-page-title').innerText = `${modeLabels[currentTargetMode][activeRouteChannelTarget]} Starters Settings`;
                 document.getElementById(`nav-frames-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-900";
                 renderFramesSubCollectionsCanvas();
                 return;
@@ -306,7 +378,7 @@
             if(target.startsWith('wordbanks-')) {
                 activeRouteChannelTarget = target.split('-')[1];
                 document.getElementById('view-wordbanks-container').classList.remove('hidden');
-                document.getElementById('wordbanks-page-title').innerText = `Word Banks: ${activeRouteChannelTarget.toUpperCase()}`;
+                document.getElementById('wordbanks-page-title').innerText = `${modeLabels[currentTargetMode][activeRouteChannelTarget]} Vocabulary Studio`;
                 document.getElementById(`nav-wordbanks-${activeRouteChannelTarget}`).className = "w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-900";
                 renderWordBanksSubCollectionsCanvas();
                 return;
@@ -335,6 +407,8 @@
         // ==========================================
         function renderWorkspaceAccordionCanvas() {
             const wrapper = document.getElementById('vertical-accordion');
+            const currentLabels = modeLabels[currentTargetMode];
+            
             wrapper.innerHTML = activeChannels.map(ch => {
                 const isOpen = openWorkspaceAccordion === ch;
                 const active = DB.active_selections[ch];
@@ -351,7 +425,7 @@
                     <div class="bg-white border rounded-2xl shadow-sm overflow-hidden border-slate-200">
                         <button onclick="toggleWorkspaceAccordionTab('${ch}')" class="w-full px-5 py-3 text-left flex justify-between items-center bg-slate-50/70 border-b hover:bg-slate-100 transition-all">
                             <div class="flex items-center gap-3">
-                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded text-white text-center" style="background-color: ${activeBankSet.color || '#475569'}">${ch}</span>
+                                <span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded text-white text-center min-w-[80px]" style="background-color: ${activeBankSet.color || '#475569'}">${currentLabels[ch]}</span>
                                 <span class="text-xs text-slate-400 font-medium truncate max-w-md">${labelSummary}</span>
                             </div>
                             <span class="text-xs text-slate-400">${isOpen ? '▼' : '▶'}</span>
@@ -360,13 +434,13 @@
                             
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                                 <div>
-                                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-0.5">Frame Track Folder</label>
+                                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-0.5">Linked Starter Track</label>
                                     <select onchange="changeActiveWorkspacePointer('${ch}', 'frameId', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700">
                                         ${frameCollections.map(fs => `<option value="${fs.id}" ${ptr.frameId === fs.id ? 'selected' : ''}>${fs.label}</option>`).join('')}
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-0.5">Word Bank Target</label>
+                                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-0.5">Linked Vocabulary Matrix</label>
                                     <select onchange="changeActiveWorkspacePointer('${ch}', 'bankId', this.value)" class="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700">
                                         ${bankCollections.map(wb => `<option value="${wb.id}" ${ptr.bankId === wb.id ? 'selected' : ''}>${wb.label}</option>`).join('')}
                                     </select>
@@ -415,16 +489,17 @@
                 const act = DB.active_selections[ch];
                 const bankSet = (DB.word_banks[ch] || []).find(b => b.id === DB.active_config_pointers[ch].bankId) || { color: '#475569' };
                 if(act.frame || act.word) {
-                    fragments.push(`<span>${act.frame}</span> <span style="color: ${bankSet.color}; font-weight:600;">${act.word || '...'}</span>.`);
+                    // Enhanced structural font emphasis logic separating word choice fragments cleanly from frames
+                    fragments.push(`<span>${act.frame}</span> <span style="color: ${bankSet.color};" class="font-extrabold underline decoration-2">${act.word || '...'}</span>.`);
                 }
             });
 
             if(fragments.length === 0) {
-                display.innerHTML = `Select targets from the workspace blocks to populate your custom paragraph summary manifest data...`;
-                display.className = "space-y-2 text-base leading-relaxed text-slate-400 italic";
+                display.innerHTML = `Select options from the sections on the left to start building your story layout...`;
+                display.className = "space-y-2 text-sm leading-relaxed text-slate-400 italic pt-2";
             } else {
                 display.innerHTML = fragments.join(" ");
-                display.className = "space-y-2 text-base leading-relaxed text-slate-800 font-medium transition-all";
+                display.className = "space-y-2 text-base leading-relaxed text-slate-800 font-normal transition-all pt-2";
             }
         }
 
@@ -434,14 +509,14 @@
                 const act = DB.active_selections[ch];
                 if(act.frame || act.word) lines.push(`${act.frame} ${act.word || '...'}.`);
             });
-            if(lines.length === 0) { alert("The active construction workspace contains no entries."); return; }
+            if(lines.length === 0) { alert("The workspace content is empty."); return; }
             confetti({ particleCount: 100, spread: 50, origin: { y: 0.7 } });
-            alert(`Compiled Paragraph Transcript:\n\n${lines.join(" ")}`);
+            alert(`My Story Transcript:\n\n${lines.join(" ")}`);
         }
 
         function saveActiveStory() {
             const titleElement = document.getElementById('active-story-title');
-            const title = titleElement.value.trim() || `Social Report Summary (${new Date().toLocaleDateString()})`;
+            const title = titleElement.value.trim() || `${currentTargetMode === 'social' ? 'Social Story' : 'Literature Review'} (${new Date().toLocaleDateString()})`;
             const textLines = [];
             activeChannels.forEach(ch => {
                 const act = DB.active_selections[ch];
@@ -458,7 +533,7 @@
 
         function speakActiveText() {
             const rawText = document.getElementById('live-text-composite').innerText;
-            if(!rawText.includes("Select targets")) executeAudioVoiceSpeechSynthesis(rawText);
+            if(!rawText.includes("Select options")) executeAudioVoiceSpeechSynthesis(rawText);
         }
 
         function executeAudioVoiceSpeechSynthesis(txt) {
@@ -479,10 +554,9 @@
         function renderFramesSubCollectionsCanvas() {
             const wrapper = document.getElementById('frames-collections-wrapper');
             const collections = DB.sentence_frames[activeRouteChannelTarget] || [];
-            
-            // Build Core Starred Favorites View Component
             const favoritesBucket = document.getElementById('frames-favorites-bucket');
             const starredItems = [];
+            
             collections.forEach(folder => {
                 folder.items.forEach((item, idx) => {
                     if(item.starred) starredItems.push({ folderId: folder.id, index: idx, text: item.text });
@@ -490,17 +564,16 @@
             });
 
             if(starredItems.length === 0) {
-                favoritesBucket.innerHTML = `<span class="text-slate-400 italic text-xs font-normal">No sentence structures starred inside this workspace tier module.</span>`;
+                favoritesBucket.innerHTML = `<span class="text-slate-400 italic text-xs font-normal">No starred items recorded in this section folder.</span>`;
             } else {
                 favoritesBucket.innerHTML = starredItems.map(fav => `
-                    <div class="px-2.5 py-1 bg-white border border-blue-200 rounded-lg shadow-sm flex items-center gap-2">
-                        <span class="font-medium text-slate-700">${fav.text}</span>
+                    <div class="px-2.5 py-1 bg-white border border-blue-200 rounded-lg shadow-sm flex items-center gap-2 font-medium">
+                        <span class="text-slate-700">${fav.text}</span>
                         <button onclick="toggleFrameStarState('${fav.folderId}', ${fav.index})" class="text-amber-500 hover:text-slate-300 text-xs">★</button>
                     </div>
                 `).join('');
             }
 
-            // Build Main Saved Folders List View
             wrapper.innerHTML = collections.map(set => {
                 const isCollapsed = collapsedConfigFolders[set.id] === true;
                 return `
@@ -508,8 +581,8 @@
                         <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
                             <span class="font-semibold text-slate-700 text-xs uppercase tracking-wider">${set.label}</span>
                             <div class="flex items-center gap-3 text-xs no-print">
-                                <button onclick="toggleConfigFolderCollapse('${set.id}')" class="text-blue-600 hover:text-blue-800 font-medium">${isCollapsed ? 'Expand Configuration' : 'Collapse and Save Set'}</button>
-                                <button onclick="deleteSentenceFrameCollection('${set.id}')" class="text-red-400 hover:text-red-600">Delete Entire Folder</button>
+                                <button onclick="toggleConfigFolderCollapse('${set.id}')" class="text-blue-600 hover:text-blue-800 font-medium">${isCollapsed ? 'Expand Content' : 'Collapse and Save Set'}</button>
+                                <button onclick="deleteSentenceFrameCollection('${set.id}')" class="text-red-400 hover:text-red-600">Delete Folder</button>
                             </div>
                         </div>
                         <div class="p-4 space-y-2 ${isCollapsed ? 'hidden' : ''}">
@@ -615,7 +688,7 @@
                             </div>
                             <div class="flex items-center gap-3 text-xs no-print">
                                 <button onclick="toggleConfigFolderCollapse('${bank.id}')" class="text-blue-600 hover:text-blue-800 font-medium">${isCollapsed ? 'Expand Content' : 'Collapse and Save Set'}</button>
-                                <button onclick="deleteWordBankCollection('${bank.id}')" class="text-red-400 hover:text-red-600">Delete Entire Bank</button>
+                                <button onclick="deleteWordBankCollection('${bank.id}')" class="text-red-400 hover:text-red-600">Delete Bank</button>
                             </div>
                         </div>
                         <div class="p-4 space-y-2 ${isCollapsed ? 'hidden' : ''}">
@@ -702,7 +775,7 @@
         }
 
         // ==========================================
-        // MODULE 4: AUXILIARY APPLICATION LIFE CYCLES
+        // MODULE 4: GRAPHIC ORGANIZERS VISUAL ENGINES
         // ==========================================
         function renderGraphicOrganizersCanvas() {
             const listWho = document.getElementById('go-list-who');
@@ -746,24 +819,65 @@
         function resetOrganizerInputFields(fileInput) { document.getElementById('go-input-name').value = ""; fileInput.value = ""; renderGraphicOrganizersCanvas(); }
         function deleteOrganizerAssetCard(id) { DB.organizers = DB.organizers.filter(o => o.id !== id); commitLocalStorage(); renderGraphicOrganizersCanvas(); }
 
+        // ========================================================
+        // MODULE 5: STORIES ARCHIVE PORTFOLIO LOG (RENAME & PRINT)
+        // ========================================================
         function renderStoriesTimelineArchiveCanvas() {
             const output = document.getElementById('saved-stories-container');
             if(!DB.stories || DB.stories.length === 0) {
-                output.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 italic border border-slate-200 shadow-sm">No saved portfolios indexed.</div>`;
+                output.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 italic border border-slate-200 shadow-sm">No saved stories located inside device memory portfolios.</div>`;
                 return;
             }
             output.innerHTML = DB.stories.map(st => `
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col justify-between md:flex-row items-start md:items-center gap-4 shadow-sm">
-                    <div class="space-y-0.5 flex-1">
+                    <div class="space-y-1 flex-1">
                         <div class="flex items-center gap-3">
-                            <h4 class="font-semibold text-slate-900 text-sm">${st.title}</h4>
-                            <span class="text-[9px] font-medium text-slate-400 uppercase">${st.timestamp}</span>
+                            <!-- Inline Title Renaming Feature Block -->
+                            <h4 contenteditable="true" onblur="renameSavedStoryTitle(${st.id}, this.innerText)" class="font-semibold text-slate-900 text-sm border-b border-transparent hover:border-slate-300 focus:border-blue-500 pr-2 cursor-text transition-all">${st.title}</h4>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase">${st.timestamp}</span>
                         </div>
                         <p class="text-xs font-medium text-slate-600 leading-relaxed">${st.content}</p>
                     </div>
-                    <button onclick="deleteStoryFromHistoricalLog(${st.id})" class="px-2.5 py-1 text-red-500 hover:bg-red-50 border border-red-100 rounded-lg text-xs font-medium self-end md:self-center">Delete</button>
+                    <div class="flex items-center gap-2 no-print self-end md:self-center">
+                        <!-- Direct Individual Single Story Quick-Print Feature Hook -->
+                        <button onclick="printSingleSavedStoryRecord('${st.title.replace(/'/g, "\\'")}', '${st.content.replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold border border-slate-200 transition-all">🖨️ Print</button>
+                        <button onclick="deleteStoryFromHistoricalLog(${st.id})" class="px-2.5 py-1 text-red-500 hover:bg-red-50 border border-red-100 rounded-lg text-xs font-medium">Delete</button>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        function renameSavedStoryTitle(id, updatedTitle) {
+            const story = DB.stories.find(s => s.id === id);
+            if(story && updatedTitle.trim() !== "") {
+                story.title = updatedTitle.trim();
+                commitLocalStorage();
+            }
+        }
+
+        function printSingleSavedStoryRecord(title, content) {
+            // Generates a dynamic isolated document rendering pipeline for clean vertical single sheet printing execution
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>${title}</title>
+                    <style>
+                        body { font-family: system-ui, -apple-system, sans-serif; padding: 2rem; color: #1e293b; line-height: 1.6; }
+                        h1 { border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; font-size: 1.75rem; color: #0f172a; margin-bottom: 1.5rem; }
+                        p { font-size: 1.15rem; white-space: pre-wrap; }
+                    </style>
+                </head>
+                <body>
+                    <h1>${title}</h1>
+                    <p>${content}</p>
+                    <script>
+                        window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
 
         function deleteStoryFromHistoricalLog(id) {
@@ -817,16 +931,8 @@
             body.classList.add(fontClass);
         }
 
-        // Handle structural object tracking parsing arrays on load
-        activeChannels.forEach(ch => {
-            if(DB.sentence_frames[ch] && DB.sentence_frames[ch][0] && typeof DB.sentence_frames[ch][0].items[0] === 'string') {
-                DB.sentence_frames[ch].forEach(set => {
-                    set.items = set.items.map(str => ({ text: str, starred: false }));
-                });
-                commitLocalStorage();
-            }
-        });
-
+        // Initialize core labels and state layouts across baseline boot loops
+        updateLabelStringsAcrossInterfaceProfiles();
         applySystemFont(DB.preferences.font);
         applySystemTheme(DB.preferences.theme);
         renderWorkspaceAccordionCanvas();
